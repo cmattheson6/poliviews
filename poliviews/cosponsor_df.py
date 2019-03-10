@@ -56,61 +56,6 @@ full_lst = attributes_lst + error_attr_lst
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS']='gs://politics-data-tracker-1/dataflow/gcp_credentials.txt'
 os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
 
-# DELETE STARTING HERE
-x_data = u'This is a senator in the Senate.'
-x_data = x_data.encode('utf-8')
-
-# THE BIGQUERY TABLE FOR THIS NEEDS TO BE FIXED
-test_bill_info = {
-    'bill_id':'S1000',
-    'amdt_id': None,
-    'cosponsor_fn':'Caroline M.',
-    'cosponsor_ln':'Brantley IV',
-    'cosponsor_party':'R',
-    'cosponsor_state':'FL'
-}
-
-test_bill_info_w_error = {
-    'bill_id':'S1000',
-    'amdt_id': None,
-    'cosponsor_fn':'Caroline M.',
-    'cosponsor_ln':'Brantley IV',
-    'cosponsor_state':'FL'
-}
-
-test_bill_info = {k:str(v) for (k,v) in test_bill_info.items()}
-test_bill_info_w_error = {k:str(v) for (k,v) in test_bill_info_w_error.items()}
-
-n_tbl_ex = [{'nickname': 'Joe', 'full_name': 'Joseph'},
-            {'nickname': 'Carol', 'full_name': 'Caroline'}]
-
-publisher = pubsub.PublisherClient()
-
-logging.info('Publisher client constructed.')
-
-topic_path = publisher.topic_path(project_id, topic_name)
-future = publisher.publish(
-    topic_path,
-    data = x_data,
-    bill_id = test_bill_info['bill_id'],
-    amdt_id = test_bill_info['amdt_id'],
-    cosponsor_fn = test_bill_info['cosponsor_fn'],
-    cosponsor_ln = test_bill_info['cosponsor_ln'],
-    cosponsor_party = test_bill_info['cosponsor_party'],
-    cosponsor_state = test_bill_info['cosponsor_state'])
-
-# future = publisher.publish(
-#     topic_path,
-#     data = x_data,
-#     bill_id = test_bill_info_w_error['bill_id'],
-#     amdt_id = test_bill_info_w_error['amdt_id'],
-#     cosponsor_fn = test_bill_info_w_error['cosponsor_fn'],
-#     cosponsor_ln = test_bill_info_w_error['cosponsor_ln'],
-#     cosponsor_state = test_bill_info_w_error['cosponsor_state'])
-
-logging.info('Published message ID {0}.'.format(future.result()))
-# DELETE ENDING HERE
-
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(
     streaming=True,

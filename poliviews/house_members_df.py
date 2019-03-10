@@ -59,63 +59,6 @@ pol_full_lst = pol_attr_lst + error_attr_lst
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS']='gs://politics-data-tracker-1/dataflow/gcp_credentials.txt'
 os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
 
-### DELETE STARTS HERE
-test_rep_old = {
-    'first_name': 'Cameron',
-    'last_name': 'Mattheson',
-    'party': 'R',
-    'state': 'MA',
-    'district': '1st'
-}
-test_rep_new = {
-    'first_name': 'Carol',
-    'last_name': 'Brantley IV',
-    'party': 'R',
-    'state': 'FL',
-    'district': '2nd'
-}
-
-n_tbl_ex = [{'nickname': 'Joe', 'full_name': 'Joseph'},
-            {'nickname': 'Carol', 'full_name': 'Caroline'}]
-pol_tbl_ex = [{'first_name': 'Cameron',
-               'last_name': 'Mattheson',
-               'party': 'R',
-               'state': 'MA',
-               'suffix': None,
-               'nickname': None}]
-# date_today = str(date.today())
-
-logging.info('Created test dataset.')
-
-x_data = u'This is a representative in the House.'
-x_data = x_data.encode('utf-8')
-
-publisher = pubsub.PublisherClient()
-
-logging.info('Publisher client constructed.')
-
-topic_path = publisher.topic_path(project_id, topic_name)
-future = publisher.publish(topic_path,
-                           data=x_data,
-                           first_name=test_rep_old['first_name'],
-                           last_name=test_rep_old['last_name'],
-                           party=test_rep_old['party'],
-                           state=test_rep_old['state'],
-                           district=test_rep_old['district'])
-
-logging.info('Published message ID {0}'.format(future.result()))
-
-future = publisher.publish(topic_path,
-                           data=x_data,
-                           first_name=test_rep_new['first_name'],
-                           last_name=test_rep_new['last_name'],
-                           party=test_rep_new['party'],
-                           state=test_rep_new['state'],
-                           district=test_rep_new['district'])
-
-logging.info('Published message ID {0}'.format(future.result()))
-### DELETE ENDS HERE
-
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(streaming=True,
                           runner='DataflowRunner',
