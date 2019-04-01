@@ -56,7 +56,7 @@ pol_full_lst = pol_attr_lst + error_attr_lst
 
 # Here are the credentials needed of a service account in order to access GCP
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS']='gs://politics-data-tracker-1/dataflow/gcp_credentials.txt'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(streaming=True,
