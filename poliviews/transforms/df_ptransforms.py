@@ -254,12 +254,12 @@ class FixHouseFirstNameFn(beam.DoFn):
 class FilterKeysFn(beam.DoFn):
     def process(self, element, attr_lst):
         {k:v for (k,v) in element.items() if k in attr_lst}
-        if all([v in attr_lst for v in element.keys()]):
+        if all([k in attr_lst for k in element.keys()]):
             logging.info('{0}: {1}'.format(self.__class__.__name__, element))
             yield element
         else:
-            missing_vals = [v for v in element.keys() if v not in attr_lst]
-            raise IndexError('{0} not in attr_lst'.format(missing_vals))
+            missing_keys = [k for k in element.keys() if k not in attr_lst]
+            raise IndexError('{0} not in attr_lst'.format(missing_keys))
 
 # For the House and Senate table, today's date is appended to the element before uploading.
 class AddDateFn(beam.DoFn):
