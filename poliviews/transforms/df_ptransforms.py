@@ -253,7 +253,10 @@ class FixHouseFirstNameFn(beam.DoFn):
 # This DoFn ensures that only an approved list of keys will be imported into BigQuery.
 class FilterKeysFn(beam.DoFn):
     def process(self, element, attr_lst):
-        {k:v for (k,v) in element.items() if k in attr_lst}
+        element = {k:v for (k,v) in element.items() if k in attr_lst}
+        removed_keys = [k for k in element.keys() if k not in attr_lst]
+        if len(removed_keys) > 0:
+            logging.info('Removed keys: {0}'.format(removed_keys))
         if all([k in attr_lst for k in element.keys()]):
             logging.info('{0}: {1}'.format(self.__class__.__name__, element))
             yield element
