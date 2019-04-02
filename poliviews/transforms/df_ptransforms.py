@@ -269,7 +269,7 @@ class AddDateFn(beam.DoFn):
     def process(self, element):
         try:
             from datetime import date
-            element['date'] = date.today()
+            element['date'] = date.today().isoformat()
             yield element
         except Exception as e:
             element['error_msg'] = e
