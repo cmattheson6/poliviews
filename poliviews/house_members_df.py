@@ -55,17 +55,12 @@ house_attr_lst = ['first_name', 'last_name', 'party', 'state', 'district', 'date
 error_attr_lst = ['error_msg', 'ptransform', 'script']
 pol_full_lst = pol_attr_lst + error_attr_lst
 
-# Here are the credentials needed of a service account in order to access GCP
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS']='gs://politics-data-tracker-1/dataflow/gcp_credentials.txt'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
-
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(streaming=True,
                           runner='DataflowRunner',
                           project=project_id,
                           temp_location='gs://{0}/tmp'.format(project_id),
                           staging_location='gs://{0}/staging'.format(project_id))
-                          # extra_package=ptransform_file)
 
 # This builds the Beam pipeline in order to run Dataflow
 p = beam.Pipeline(options=options)
@@ -150,13 +145,14 @@ new_pol = (clean_pols
 
 # A new Rep line will be published every day in this pipeline. We add today's date to record their time in office
 # and will upload a row signifying their time in office on that day.
-new_rep = (clean_pols
-               | 'Field Formatting' >> beam.ParDo(pt.AddDateFn())
-               | 'Filter Keys' >> beam.ParDo(pt.FilterKeysFn(), attr_lst=house_attr_lst)
-               | 'Write Rep to BQ' >> beam.io.WriteToBigQuery(
-                    table=house_spec,
-                    write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-                    create_disposition=beam.io.BigQueryDisposition.CREATE_NEVER
+new_rep = (
+        clean_pols
+        | 'Add Date' >> beam.ParDo(pt.AddDateFn())
+        | 'Filter House Keys' >> beam.ParDo(pt.FilterKeysFn(), attr_lst=house_attr_lst)
+        | 'Write Rep to BQ' >> beam.io.WriteToBigQuery(
+            table=house_spec,
+            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+            create_disposition=beam.io.BigQueryDisposition.CREATE_NEVER
         ))
 
 
@@ -166,7 +162,6 @@ new_rep = (clean_pols
     | 'Make All Strings' >> beam.ParDo(pt.MakeAllStringsFn())
     | 'CSV Formatting' >> beam.ParDo(pt.BuildCSVRowFn(), lst=pol_full_lst)
     | 'Write to CSV' >> beam.io.WriteToText(
-        # 'C:/Users/cmatt/Documents/politics-data-tracker-1/error_files',
         'gs://{0}/error_files/{1}'.format(project_id, script_name),
         file_name_suffix='.csv',
         append_trailing_newlines=True,

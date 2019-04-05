@@ -130,7 +130,6 @@ new_senator = (
     | 'Make All Strings' >> beam.ParDo(pt.MakeAllStringsFn())
     | 'CSV Formatting' >> beam.ParDo(pt.BuildCSVRowFn(), lst=pol_full_lst)
     | 'Write to CSV' >> beam.io.WriteToText(
-        # 'C:/Users/cmatt/Documents/politics-data-tracker-1/error_files',
         'gs://{0}/error_files/{1}'.format(project_id, script_name),
         file_name_suffix='.csv',
         append_trailing_newlines=True,
