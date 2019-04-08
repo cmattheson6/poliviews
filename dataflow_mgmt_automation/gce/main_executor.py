@@ -37,9 +37,9 @@ dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'poliviews/senate_members_df.py')
 dataflow_task = "git pull origin " \
               "&& python ../poliviews/senate_members_df.py " \
-              "--setup=../poliviews/setup.py --experiments=allow_non_updatable_job parameter " \
+              " --setup=../poliviews/setup.py --experiments=allow_non_updatable_job parameter " \
               "&& python ../poliviews/house_members_df.py " \
-              "--setup=../poliviews/setup.py --experiments=allow_non_updatable_job parameter "
+              " --setup=../poliviews/setup.py --experiments=allow_non_updatable_job parameter "
 "sleep 300; gcloud beta dataflow jobs drain *"
 
 root_logger = logging.getLogger('cron_executor')
