@@ -34,13 +34,13 @@ TOPIC = 'test'
 script_path = os.path.abspath(os.path.join(os.getcwd(), 'logger_sample_task.py'))
 
 dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, 'dataflow_scripts/poliviews/senate_members_df.py')
-dataflow_task = "git pull origin " \
-              "&& python ../dataflow_scripts/poliviews/senate_members_df.py " \
-              "--setup=../dataflow_scripts/poliviews/setup.py --experiments=allow_non_updatable_job parameter" \
-              "&& python ../dataflow_scripts/poliviews/house_members_df.py " \
-              "--setup=../dataflow_scripts/poliviews/setup.py --experiments=allow_non_updatable_job parameter"
-"gcloud beta dataflow jobs drain *"
+filename = os.path.join(dirname, 'poliviews/senate_members_df.py')
+dataflow_task = "git pull origin" \
+              "&& python ../poliviews/senate_members_df.py" \
+              "--setup=../poliviews/setup.py --experiments=allow_non_updatable_job parameter" \
+              "&& python ../poliviews/house_members_df.py" \
+              "--setup=../poliviews/setup.py --experiments=allow_non_updatable_job parameter"
+"sleep 300; gcloud beta dataflow jobs drain *"
 
 root_logger = logging.getLogger('cron_executor')
 root_logger.setLevel(logging.DEBUG)
