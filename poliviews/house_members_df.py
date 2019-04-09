@@ -96,8 +96,7 @@ class StateMapFn(beam.DoFn):
         try:
             import pandas as pd
             tbl = pd.DataFrame(tbl)
-            criteria = [tbl['state']==element['state']]
-            tbl_matched = tbl[criteria]
+            tbl_matched = tbl[tbl['state']==element['state']]
             if len(tbl_matched.index) > 1:
                 raise ValueError('There are multiple states in the database that match the given state.')
             elif len(tbl_matched.index) == 1:
