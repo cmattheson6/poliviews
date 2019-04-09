@@ -5,7 +5,7 @@ setuptools.setup(
     version='0.0.1',
     install_requires=[
         'pandas',
-        'unidecode'
+        'Unidecode'
     ],
     packages = ['transforms']
 )
