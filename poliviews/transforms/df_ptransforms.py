@@ -25,6 +25,7 @@ from apache_beam import pvalue
 # Miscellaneous modules
 import re
 import pandas as pd
+import unidecode
 
 error_tag = 'error_tag'
 
@@ -76,7 +77,8 @@ class BuildPSMFn(beam.DoFn):
 class FixTypesFn(beam.DoFn):
     def process(self, element, int_lst):
         try:
-            d = {str(k):str(v) for (k, v) in element.items()}
+            from unidecode import unidecode
+            d = {str(k):unidecode(str(v)) for (k, v) in element.items()}
             d = {k:(int(v) if k in int_lst else v) for (k,v) in element.items()}
             logging.info('{0}: {1}'.format(self.__class__.__name__, element))
             yield d

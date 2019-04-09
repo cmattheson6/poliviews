@@ -94,6 +94,7 @@ state_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in pols_tbl]
 class StateMapFn(beam.DoFn):
     def process(self, element, tbl):
         try:
+            import pandas as pd
             tbl = pd.DataFrame(tbl)
             criteria = [tbl['state']==element['state']]
             tbl_matched = tbl[criteria]
