@@ -11,6 +11,8 @@ import logging
 
 
 class SenateMembersPipeline(object):
+    def open_spider(self, spider):
+
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
         In order to host the spiders on Github, the service account credentials are housed on the Scrapy platform
