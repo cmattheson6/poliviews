@@ -35,9 +35,9 @@ TOPIC = 'scrapy'
 #
 # dirname = os.path.dirname(__file__)
 # filename = os.path.join(dirname, 'poliviews/senate_members_df.py')
-dataflow_task = "cd ~/web_scrapers/senate_members " \
+dataflow_task = "cd ~/dataflow_scripts/web_scrapers/senate_members " \
 "&& scrapy crawl gen_senate " \
-"&& cd ~/web_scrapers/house-members "\
+"&& cd ~/dataflow_scripts/web_scrapers/house-members "\
 "&& scrapy crawl house_pols "
 
 root_logger = logging.getLogger('cron_executor')
