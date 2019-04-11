@@ -35,7 +35,7 @@ TOPIC = 'scrapy'
 #
 # dirname = os.path.dirname(__file__)
 # filename = os.path.join(dirname, 'poliviews/senate_members_df.py')
-dataflow_task = "cd ~/webscrapers/senate_members " \
+dataflow_task = "cd ~/web_scrapers/senate_members " \
 "&& scrapy crawl gen_senate " \
 "&& cd ~/web_scrapers/house-members "\
 "&& scrapy crawl house_pols "
