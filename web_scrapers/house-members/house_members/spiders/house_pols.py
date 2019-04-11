@@ -6,7 +6,7 @@ current House member list up to date.
 
 import scrapy
 import logging
-from house_members.items import HouseMembersItem
+from .. house_members.items import HouseMembersItem
 
 class HousePolsSpider(scrapy.Spider):
     name = "house_pols"
