@@ -28,11 +28,11 @@ class PoliticiansPipeline(object):
         topic_path = self.publisher.topic_path(project_id, topic_name)
         data = u'This is a representative in the House.' #Consider how to better use this.
         data = data.encode('utf-8')
-        self.publisher.publish(topic_path, data=data,
+        future = self.publisher.publish(topic_path, data=data,
                           first_name = item['first_name'],
                           last_name = item['last_name'],
                           party = item['party'],
                           state = item['state'],
                           district = item['district'])
-        logging.info('Published item: {0}'.format(item))
+        logging.info('Published item: {0}'.format(future.result))
         return item
