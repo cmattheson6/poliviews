@@ -9,18 +9,11 @@ import logging
 
 class PoliticiansPipeline(object):
     publisher = pubsub.PublisherClient()
-    # def open_spider(self, spider):
-    #     publisher = pubsub.PublisherClient()
-    #     logging.info('Publisher Client created.')
 
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
         In order to host the spiders on Github, the service account credentials are housed on the Scrapy platform
         and dynamically created in the script."""
-        #
-        # # Create Publisher client.
-        # publisher = pubsub.PublisherClient()
-        # logging.info('Publisher Client created.')
 
         # Set location of proper publisher topic
         project_id = 'politics-data-tracker-1'
@@ -34,5 +27,5 @@ class PoliticiansPipeline(object):
                           party = item['party'],
                           state = item['state'],
                           district = item['district'])
-        logging.info('Published item: {0}'.format(future.result))
+        logging.info('Published item: {0}'.format(future.result()))
         return item
