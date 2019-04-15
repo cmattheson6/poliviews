@@ -6,10 +6,14 @@ The rest of the processing will take place in Dataflow.
 
 from google.cloud import pubsub
 import logging
+import pandas as pd
 
 class PoliticiansPipeline(object):
     publisher = pubsub.PublisherClient()
-
+    # def open_spider(self, spider):
+    # set csv location and open it
+    df = pd.DataFrame(columns=[]) #Figure out how to get the columns automatically populated
+    # pass
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
         In order to host the spiders on Github, the service account credentials are housed on the Scrapy platform
@@ -28,4 +32,11 @@ class PoliticiansPipeline(object):
                           state = item['state'],
                           district = item['district'])
         logging.info('Published item: {0}'.format(future.result()))
+
+        # Add the item as a row in the csv here
+        self.df.append(dict(item)) #check this
         return item
+    def close_spider(self, spider):
+        # close spider
+        self.df.to_csv() # figure out best location; tmp folder?
+        pass
