@@ -56,7 +56,7 @@ error_attr_lst = ['error_msg', 'ptransform', 'script']
 pol_full_lst = pol_attr_lst + error_attr_lst
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
-options = PipelineOptions(streaming=True,
+options = PipelineOptions(streaming=False,
                           runner='DataflowRunner',
                           project=project_id,
                           temp_location='gs://{0}/tmp'.format(project_id),
@@ -113,14 +113,19 @@ class StateMapFn(beam.DoFn):
             yield element
         yield element
 
+class SplitRowsFn(beam.DoFn):
+    def process(self, element, *args, **kwargs):
+        for i in element:
+            #pull out one row
+            # convert to dict
+            # yield new dict as a pcollection
+            pass
+
 # Runs the main part of the pipeline. Errors will be tagged, clean politicians will continue on to BQ.
 pol = (
         p
-        | 'Read from PubSub' >> beam.io.gcp.pubsub.ReadFromPubSub(
-            topic = None,
-            subscription = 'projects/{0}/subscriptions/{1}'
-                      .format(project_id, subscription_name),
-            with_attributes = True)
+        | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/house_pols/*.csv'.format(os.path.expanduser('~')))
+        | 'Split Rows' >> beam.ParDo(SplitRowsFn())
         | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
         | 'Scrub First Name' >> beam.ParDo(pt.ScrubFnameFn(), keep_suffix=True)
         | 'Fix Nicknames' >> beam.ParDo(pt.FixNicknameFn(), n_tbl=nickname_tbl, keep_nickname=True)
