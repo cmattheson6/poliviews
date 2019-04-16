@@ -17,7 +17,7 @@ class PoliticiansPipeline(object):
     # set csv location and open it
     # df = pd.DataFrame(columns=[]) #Figure out how to get the columns automatically populated
     file_path = '{0}/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today())
-    open(file_path, mode='w+')
+    open(file_path, mode='x')
     lst = []
     logging.info('Created empty list for House.')
     # pass
