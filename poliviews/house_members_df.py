@@ -116,7 +116,7 @@ class StateMapFn(beam.DoFn):
 class SplitFn(beam.DoFn):
     def process(self, element):
         for i in element:
-            first_name, last_name, party, state, district = element.split(',')
+            index, first_name, last_name, party, state, district = element.split(',')
             d = {
                 'first_name': first_name,
                 'last_name': last_name,
@@ -129,7 +129,8 @@ class SplitFn(beam.DoFn):
 # Runs the main part of the pipeline. Errors will be tagged, clean politicians will continue on to BQ.
 pol = (
         p
-        | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/house_pols/*.csv'.format(os.path.expanduser('~')))
+        | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/house_pols/*.csv'.format(os.path.expanduser('~')),
+                                                  skip_header_lines=1)
         | 'Split Values' >> beam.ParDo(SplitFn())
         # | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
         | 'Scrub First Name' >> beam.ParDo(pt.ScrubFnameFn(), keep_suffix=True)
