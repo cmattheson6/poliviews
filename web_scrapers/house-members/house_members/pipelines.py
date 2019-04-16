@@ -10,6 +10,7 @@ import pandas as pd
 from datetime import date
 import os
 import sys
+import unidecode
 
 class PoliticiansPipeline(object):
     # publisher = pubsub.PublisherClient()
@@ -42,6 +43,7 @@ class PoliticiansPipeline(object):
 
         # Add the item as a row in the csv here
         # self.df.append(dict(item), sort=True) #check this
+        item = {k:unidecode.unidecode(v) for (k,v) in item.items()}
         self.lst.append(dict(item))
         logging.info('Appended item: {0}'.format(item))
         return item
