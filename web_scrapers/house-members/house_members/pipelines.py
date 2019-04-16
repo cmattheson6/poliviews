@@ -14,14 +14,10 @@ import unidecode
 
 class PoliticiansPipeline(object):
     # publisher = pubsub.PublisherClient()
-    # def open_spider(self, spider):
     # set csv location and open it
-    # df = pd.DataFrame(columns=[]) #Figure out how to get the columns automatically populated
     file_path = '{0}/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today())
-    open(file_path, mode='w+')
+    f= open(file_path, mode='a+')
     lst = []
-    logging.info('Created empty list for House.')
-    # pass
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
         In order to host the spiders on Github, the service account credentials are housed on the Scrapy platform
@@ -42,15 +38,13 @@ class PoliticiansPipeline(object):
         # logging.info('Published item: {0}'.format(future.result()))
 
         # Add the item as a row in the csv here
-        # self.df.append(dict(item), sort=True) #check this
         item = {k:unidecode.unidecode(v) for (k,v) in item.items()}
         self.lst.append(dict(item))
         logging.info('Appended item: {0}'.format(item))
         return item
     def close_spider(self, spider):
         # send all scraped items to a CSV for processing by Dataflow
-        # print(self.lst)
         df = pd.DataFrame(self.lst)
-        logging.info('Created dataframe.')
         df.to_csv(self.file_path)
-        logging.info('Created CSV.')
+        logging.info('Created CSV at {0}'.format(self.file_path))
+        self.f.close()
