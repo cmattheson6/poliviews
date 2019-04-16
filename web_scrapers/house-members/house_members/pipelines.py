@@ -48,5 +48,5 @@ class PoliticiansPipeline(object):
         # print(self.lst)
         df = pd.DataFrame(self.lst)
         logging.info('Created dataframe.')
-        df.to_csv('{0}/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today()))
+        df.to_csv('{0}@instance-1/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today()))
         logging.info('Created CSV.')
