@@ -16,6 +16,8 @@ class PoliticiansPipeline(object):
     # def open_spider(self, spider):
     # set csv location and open it
     # df = pd.DataFrame(columns=[]) #Figure out how to get the columns automatically populated
+    file_path = '{0}/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today())
+    open(file_path, mode='w+')
     lst = []
     logging.info('Created empty list for House.')
     # pass
@@ -48,5 +50,5 @@ class PoliticiansPipeline(object):
         # print(self.lst)
         df = pd.DataFrame(self.lst)
         logging.info('Created dataframe.')
-        df.to_csv('{0}@instance-1/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today()))
+        df.to_csv(self.file_path)
         logging.info('Created CSV.')
