@@ -17,6 +17,7 @@ class PoliticiansPipeline(object):
     # set csv location and open it
     # df = pd.DataFrame(columns=[]) #Figure out how to get the columns automatically populated
     lst = []
+    logging.info('Created empty list for House.')
     # pass
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
@@ -44,5 +45,8 @@ class PoliticiansPipeline(object):
         return item
     def close_spider(self, spider):
         # send all scraped items to a CSV for processing by Dataflow
+        print(self.lst)
         df = pd.DataFrame(self.lst)
+        logging.info('Created dataframe.')
         df.to_csv('{0}/tmp/house_pols/house_pols_{1}'.format(os.path.expanduser('~'), date.today()))
+        logging.info('Created CSV.')
