@@ -16,7 +16,8 @@ from subprocess import Popen
 file_dirname = '{0}/tmp/house_pols'.format(os.path.expanduser('~'))
 file_path = file_dirname + '/house_pols_{0}.csv'.format(date.today())
 rm_old_files = 'rm {0}/*'.format(file_dirname)
-cmd = Popen(rm_old_files, shell=True)
+cmd = Popen(rm_old_files, shell=True).stdout.read()
+print(cmd)
 
 class PoliticiansPipeline(object):
     # publisher = pubsub.PublisherClient()
@@ -51,6 +52,6 @@ class PoliticiansPipeline(object):
     def close_spider(self, spider):
         # send all scraped items to a CSV for processing by Dataflow
         df = pd.DataFrame(self.lst, columns=['first_name', 'last_name', 'party', 'state', 'district'])
-        df.to_csv(self.file_path)
-        logging.info('Created CSV at {0}'.format(self.file_path))
+        df.to_csv(file_path)
+        logging.info('Created CSV at {0}'.format(file_path))
         self.f.close()
