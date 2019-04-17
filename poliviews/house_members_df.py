@@ -87,7 +87,7 @@ pols_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in pols_tbl]
 # This query as well as the following DoFn are meant to account for that and map the initals back to the proper states.
 state_query = client.query("""
     select * from `{0}.{1}.{2}`""".format(project_id, dataset_id, 'state_map'))
-state_tbl = pols_query.result()
+state_tbl = state_query.result()
 state_tbl = [dict(row.items()) for row in pols_tbl]
 state_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in pols_tbl]
 
@@ -96,9 +96,7 @@ class StateMapFn(beam.DoFn):
         try:
             import pandas as pd
             tbl = pd.DataFrame(tbl)
-            print(tbl)
             tbl_matched = tbl[tbl['state']==element['state']]
-            print(tbl_matched)
             if len(tbl_matched.index) > 1:
                 raise ValueError('There are multiple states in the database that match the given state.')
             elif len(tbl_matched.index) == 1:
