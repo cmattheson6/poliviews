@@ -88,8 +88,8 @@ pols_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in pols_tbl]
 state_query = client.query("""
     select * from `{0}.{1}.{2}`""".format(project_id, dataset_id, 'state_map'))
 state_tbl = state_query.result()
-state_tbl = [dict(row.items()) for row in pols_tbl]
-state_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in pols_tbl]
+state_tbl = [dict(row.items()) for row in state_tbl]
+state_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in state_tbl]
 
 class StateMapFn(beam.DoFn):
     def process(self, element, tbl):
