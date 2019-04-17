@@ -56,7 +56,7 @@ pol_full_lst = pol_attr_lst + error_attr_lst
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(streaming=True,
-                          runner='DataflowRunner',
+                          runner='DirectRunner',
                           project=project_id,
                           temp_location='gs://{0}/tmp'.format(project_id),
                           staging_location='gs://{0}/staging'.format(project_id))
@@ -82,15 +82,25 @@ pols_tbl = pols_query.result()
 pols_tbl = [dict(row.items()) for row in pols_tbl]
 pols_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in pols_tbl]
 
+class SplitFn(beam.DoFn):
+    def process(self, element):
+        for i in element:
+            index, first_name, last_name, party, state = element.split(',')
+            d = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'party': party,
+                'state': state
+            }
+            yield d
+
 # Runs the main part of the pipeline. Errors will be tagged, clean politicians will continue on to BQ.
 pol = (
         p
-        | 'Read from PubSub' >> beam.io.gcp.pubsub.ReadFromPubSub(
-            topic = None,
-            subscription = 'projects/{0}/subscriptions/{1}'
-                      .format(project_id, subscription_name),
-            with_attributes = True)
-        | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
+        | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/senate_members/*.csv'.format(os.path.expanduser('~')),
+                                                  skip_header_lines=1)
+        | 'Split Values' >> beam.ParDo(SplitFn())
+        # | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
         | 'Scrub First Name' >> beam.ParDo(pt.ScrubFnameFn(), keep_suffix=True)
         | 'Fix Nicknames' >> beam.ParDo(pt.FixNicknameFn(), n_tbl=nickname_tbl, keep_nickname=True)
         | 'Scrub Last Name' >> beam.ParDo(pt.ScrubLnameFn())
