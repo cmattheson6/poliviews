@@ -11,6 +11,12 @@ from datetime import date
 import os
 import sys
 import unidecode
+from subprocess import Popen
+
+file_dirname = '{0}/tmp/house_pols'.format(os.path.expanduser('~'))
+file_path = file_dirname + '/house_pols_{0}.csv'.format(date.today())
+rm_old_files = 'rm {0}/*'.format(file_dirname)
+cmd = Popen(rm_old_files, shell=True)
 
 class PoliticiansPipeline(object):
     # publisher = pubsub.PublisherClient()
