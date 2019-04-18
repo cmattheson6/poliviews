@@ -23,7 +23,7 @@ class SenateMembersPipeline(object):
     # logging.info('Publisher Client created.')
 
     # set csv location and open it
-    file_path = '{0}/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today())
+    # file_path = '{0}/tmp/senate_members/senate_members_{1}.csv'.format(os.path.expanduser('~'), date.today())
     f= open(file_path, mode='a+')
     lst = []
 

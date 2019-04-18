@@ -22,7 +22,7 @@ print(cmd)
 class PoliticiansPipeline(object):
     # publisher = pubsub.PublisherClient()
     # set csv location and open it
-    file_path = '{0}/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today())
+    # file_path = '{0}/tmp/house_pols/house_pols_{1}.csv'.format(os.path.expanduser('~'), date.today())
     f= open(file_path, mode='a+')
     lst = []
     def process_item(self, item, spider):
