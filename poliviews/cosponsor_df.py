@@ -52,14 +52,10 @@ attributes_lst = ['bill_id','amdt_id','first_name','last_name','party','state']
 error_attr_lst = ['error_msg', 'ptransform', 'script']
 full_lst = attributes_lst + error_attr_lst
 
-# Here are the credentials needed of a service account in order to access GCP
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS']='gs://politics-data-tracker-1/dataflow/gcp_credentials.txt'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
-
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(
     streaming=True,
-    runner='DataflowRunner',
+    runner='DirectRunner',
     project=project_id,
     temp_location='gs://{0}/tmp'.format(project_id),
     staging_location='gs://{0}/staging'.format(project_id))
@@ -109,13 +105,32 @@ nickname_tbl = query_job.result()
 nickname_tbl = [dict(row.items()) for row in nickname_tbl]
 nickname_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in nickname_tbl]
 
+class SplitFn(beam.DoFn):
+    def process(self, element):
+        for i in element:
+            index, \
+            bill_id, \
+            amdt_id, \
+            cosponsor_fn, \
+            cosponsor_ln, \
+            cosponsor_party, \
+            cosponsor_state = element.split(',')
+
+            d = {
+                'bill_id': bill_id,
+                'amdt_id': amdt_id,
+                'cosponsor_fn': cosponsor_fn,
+                'cosponsor_ln': cosponsor_ln,
+                'cosponsor_party': cosponsor_party,
+                'cosponsor_state': cosponsor_state
+            }
+            yield d
+
 cosponsor = (
     p
-    | 'Read from PubSub' >> beam.io.gcp.pubsub.ReadFromPubSub(
-        topic=None,
-        subscription='projects/{0}/subscriptions/{1}'.format(project_id, subscription_name),
-        with_attributes=True)
-    | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
+    | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/cosponsors/*.csv'.format(os.path.expanduser('~')),
+                                              skip_header_lines=1)
+    | 'Split Values' >> beam.ParDo(SplitFn())
     | 'Normalize Attributes' >> beam.ParDo(NormalizeAttributesFn())
     | 'Scrub First Name' >> beam.ParDo(pt.ScrubFnameFn(), keep_suffix=False)
     | 'Fix Nicknames' >> beam.ParDo(pt.FixNicknameFn(), n_tbl = nickname_tbl, keep_nickname=False)
