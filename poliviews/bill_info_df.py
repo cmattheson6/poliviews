@@ -14,6 +14,7 @@ import sys
 
 # Pull in all Pubsub, Dataflow, and BigQuery modules
 from google.cloud import pubsub
+from google.cloud import bigquery
 
 # all Apache modules needed
 import apache_beam as beam
@@ -43,7 +44,6 @@ bill_spec = '{0}:{1}.{2}'.format(project_id, dataset_id, bill_table_id)
 # Also included is the current name of the script
 script_name = os.path.basename(sys.argv[0])
 
-
 # This is a list of all attributes that will be present in either a good vote or error vote. This will be used
 # to filter and/or order the attributes accordingly.
 # At this time, this is necessary. Make sure to do this for all pipelines.
@@ -60,20 +60,26 @@ attributes_lst = [
 error_attr_lst = ['error_msg', 'ptransform', 'script']
 full_lst = attributes_lst + error_attr_lst
 
-# Here are the credentials needed of a service account in order to access GCP
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
+# This will pull in all of the recorded nicknames to compare to the incoming PubSubMessages. This is needed to filter
+# and normalize the data.
+client = bigquery.Client()
+nickname_query = client.query("""
+    select * from `{0}.{1}.{2}`""".format(project_id, dataset_id, nickname_table_id))
+nickname_tbl = nickname_query.result()
+nickname_tbl = [dict(row.items()) for row in nickname_tbl]
+nickname_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in nickname_tbl]
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(
     streaming=True,
-    runner='DataflowRunner',
+    runner='DirectRunner',
     project=project_id,
     temp_location='gs://{0}/tmp'.format(project_id),
     staging_location='gs://{0}/staging'.format(project_id))
 
 # This builds the Beam pipeline in order to run Dataflow
 p = beam.Pipeline(options = options)
-logging.info('Created Dataflow pipeline.')
+logging.info('Created Beam pipeline.')
 
 class NormalizeAttributesFn(beam.DoFn):
     def process(self, element):
@@ -107,17 +113,42 @@ class RevertAttributesFn(beam.DoFn):
             logging.info('Error received at {0}: {1}'.format(self.__class__.__name__, element))
             yield element
 
+class SplitFn(beam.DoFn):
+    def process(self, element):
+        for i in element:
+            index, \
+            bill_id, \
+            amdt_id, \
+            bill_title, \
+            bill_summary, \
+            sponsor_fn, \
+            sponsor_ln, \
+            sponsor_party, \
+            sponsor_state, \
+            bill_url = element.split(',')
+
+            d = {
+                'bill_id': bill_id,
+                'amdt_id': amdt_id,
+                'bill_title': bill_title,
+                'bill_summary': bill_summary,
+                'sponsor_fn': sponsor_fn,
+                'sponsor_ln': sponsor_ln,
+                'sponsor_party': sponsor_party,
+                'sponsor_state': sponsor_state,
+                'bill_url': bill_url
+            }
+            yield d
+
 # Runs the main part of the pipeline. Errors will be tagged, good votes will continue on to BQ.
 bill = (
     p
-    | 'Read from PubSub' >> beam.io.gcp.pubsub.ReadFromPubSub(
-        topic=None,
-        subscription='projects/{0}/subscriptions/{1}'.format(project_id, subscription_name),
-        with_attributes=True)
-    | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
+    | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/bill_info/*.csv'.format(os.path.expanduser('~')),
+                                              skip_header_lines=1)
+    | 'Split Values' >> beam.ParDo(SplitFn())
     | 'Normalize Attributes' >> beam.ParDo(NormalizeAttributesFn())
     | 'Scrub First Name' >> beam.ParDo(pt.ScrubFnameFn(), keep_suffix=False)
-    | 'Fix Nicknames' >> beam.ParDo(pt.FixNicknameFn(), n_tbl = n_tbl_ex, keep_nickname=False)
+    | 'Fix Nicknames' >> beam.ParDo(pt.FixNicknameFn(), n_tbl = nickname_tbl, keep_nickname=False)
     | 'Scrub Last Name' >> beam.ParDo(pt.ScrubLnameFn())
     | 'Revert Attributes' >> beam.ParDo(RevertAttributesFn())
     | 'Fix Nones' >> beam.ParDo(pt.FixNoneFn())
@@ -142,7 +173,6 @@ clean_bills = bill[None]
     | 'Make All Strings' >> beam.ParDo(pt.MakeAllStringsFn())
     | 'CSV Formatting' >> beam.ParDo(pt.BuildCSVRowFn(), lst=full_lst)
     | 'Write to CSV' >> beam.io.WriteToText(
-        # 'C:/Users/cmatt/Documents/politics-data-tracker-1/error_files',
         'gs://{0}/error_files/{1}'.format(project_id, script_name),
         file_name_suffix='.csv',
         append_trailing_newlines=True,
