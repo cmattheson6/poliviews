@@ -51,7 +51,17 @@ class PoliticiansPipeline(object):
         return item
     def close_spider(self, spider):
         # send all scraped items to a CSV for processing by Dataflow
-        df = pd.DataFrame(self.lst, columns=['first_name', 'last_name', 'party', 'state', 'district'])
+        df = pd.DataFrame(self.lst,
+                          columns=['bill_id',
+                                   'amdt_id',
+                                   'first_name',
+                                   'last_name',
+                                   'party',
+                                   'state',
+                                   'vote_cast',
+                                   'vote_date',
+                                   'chamber',
+                                   'chamber_state'])
         df.to_csv(file_path)
         logging.info('Created CSV at {0}'.format(file_path))
         self.f.close()

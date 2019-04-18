@@ -71,8 +71,8 @@ this_year = date_yesterday.year
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
-options = PipelineOptions(streaming=True,
-                          runner='DataflowRunner',
+options = PipelineOptions(streaming=False,
+                          runner='DirectRunner',
                           project=project_id,
                           temp_location='gs://{0}/tmp'.format(project_id),
                           staging_location='gs://{0}/staging'.format(project_id))

@@ -54,7 +54,7 @@ full_lst = attributes_lst + error_attr_lst
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(
-    streaming=True,
+    streaming=False,
     runner='DirectRunner',
     project=project_id,
     temp_location='gs://{0}/tmp'.format(project_id),

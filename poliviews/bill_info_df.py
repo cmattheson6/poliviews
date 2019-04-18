@@ -71,7 +71,7 @@ nickname_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in nickname_tbl]
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(
-    streaming=True,
+    streaming=False,
     runner='DirectRunner',
     project=project_id,
     temp_location='gs://{0}/tmp'.format(project_id),
