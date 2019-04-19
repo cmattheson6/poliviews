@@ -16,9 +16,12 @@ from subprocess import Popen
 file_dirname = '{0}/tmp/senate_members'.format(os.path.expanduser('~'))
 file_path = file_dirname + '/senate_members_{0}.csv'.format(date.today())
 rm_old_files = 'rm {0}/*'.format(file_dirname)
-if glob.glob(file_dirname + '*.csv') > 0:
+# if glob.glob(file_dirname + '*.csv') > 0:
+try:
     cmd = Popen(rm_old_files, shell=True).stdout.read()
     print(cmd)
+except Exception as e:
+    print(e)
 
 class SenateMembersPipeline(object):
     # publisher = pubsub.PublisherClient()
