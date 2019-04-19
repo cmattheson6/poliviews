@@ -13,11 +13,14 @@ import sys
 import unidecode
 from subprocess import Popen
 
-file_dirname = '{0}/tmp/bill_votes'.format(os.path.expanduser('~'))
-file_path = file_dirname + '/bill_votes_{0}.csv'.format(date.today())
+file_dirname = '{0}/tmp/house_members'.format(os.path.expanduser('~'))
+file_path = file_dirname + '/house_members_{0}.csv'.format(date.today())
 rm_old_files = 'rm {0}/*'.format(file_dirname)
-cmd = Popen(rm_old_files, shell=True).stdout.read()
-print(cmd)
+try:
+    cmd = Popen(rm_old_files, shell=True).stdout.read()
+    print(cmd)
+except Exception as e:
+    print(e)
 
 class PoliticiansPipeline(object):
     # publisher = pubsub.PublisherClient()

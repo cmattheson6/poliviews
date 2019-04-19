@@ -129,7 +129,7 @@ class SplitFn(beam.DoFn):
 # Runs the main part of the pipeline. Errors will be tagged, clean politicians will continue on to BQ.
 pol = (
         p
-        | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/house_pols/*.csv'.format(os.path.expanduser('~')),
+        | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/house_members/*.csv'.format(os.path.expanduser('~')),
                                                   skip_header_lines=1)
         | 'Split Values' >> beam.ParDo(SplitFn())
         # | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
