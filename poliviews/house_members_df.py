@@ -115,8 +115,8 @@ class StateMapFn(beam.DoFn):
 
 class SplitFn(beam.DoFn):
     def process(self, element):
-        for i in element:
-            logging.info('{0}: {1}'.format(self.__class__.__name__, i))
+        # for i in element:
+            logging.info('{0}: {1}'.format(self.__class__.__name__, element))
             index, first_name, last_name, party, state, district = element.split(',')
             d = {
                 'first_name': first_name,
