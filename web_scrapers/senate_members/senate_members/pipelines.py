@@ -12,6 +12,7 @@ import sys
 import unidecode
 import glob
 from subprocess import Popen
+import re
 
 file_dirname = '{0}/tmp/senate_members'.format(os.path.expanduser('~'))
 file_path = file_dirname + '/senate_members_{0}.csv'.format(date.today())
@@ -52,6 +53,7 @@ class SenateMembersPipeline(object):
 
         # Add the item as a row in the csv here
         item = {k: unidecode.unidecode(v) for (k, v) in item.items()}
+        item = {k: re.sub(',', '', v) for (k, v) in item.items()}
         self.lst.append(dict(item))
         logging.info('Appended item: {0}'.format(item))
         return item
