@@ -85,6 +85,7 @@ pols_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in pols_tbl]
 class SplitFn(beam.DoFn):
     def process(self, element):
         for i in element:
+            logging.info('{0}: {1}'.format(self.__class__.__name__, i))
             index, first_name, last_name, party, state = element.split(',')
             d = {
                 'first_name': first_name,
