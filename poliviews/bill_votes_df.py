@@ -6,8 +6,6 @@ formats and filters the data, and then sends along the clean data to BQ for stor
 
 """
 
-### NEED TO FIX THIS PIPELINE TO HANDLE HOUSE MEMBERS; CURRENTLY DON"T HAVE FIRST NAME
-
 # -------- Import all necessary modules -------- #
 # Get the logging set for debugging
 import logging
@@ -47,6 +45,7 @@ subscription_name = 'test_bill_votes_sub'
 dataset_id = 'poliviews'
 dest_table_id = 'all_votes' # Location for writing any voting information
 nickname_table_id = 'nicknames' # Location to read list of any nicknames in order to properly edit politician info.
+house_tbl_id = 'house'
 
 # PubSub will only accept long strings as names of exact locations of BigQuery tables.
 bq_spec = '{0}:{1}.{2}'.format(project_id, dataset_id, dest_table_id)
@@ -65,10 +64,6 @@ full_lst = attributes_lst + error_attr_lst
 # Set date for yesterday's bills that are published
 date_yesterday = date.today() - timedelta(days=1)
 this_year = date_yesterday.year
-
-# Here are the credentials needed of a service account in order to access GCP
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS']='gs://politics-data-tracker-1/dataflow/gcp_credentials.txt'
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS']='C:\Users\cmatt\PycharmProjects\dataflow_scripts\poliviews\gcp_credentials.txt'
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(streaming=False,
@@ -91,20 +86,46 @@ nickname_tbl = [dict(row.items()) for row in nickname_tbl]
 nickname_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in nickname_tbl]
 
 house_query = client.query("""
-    select * from `{0}.{1}.{2}`""".format(project_id, dataset_id, 'house', date_yesterday))
+    select * from `{0}.{1}.{2}` where date < {3}""".format(project_id, dataset_id, house_tbl_id, date_yesterday))
 house_tbl = house_query.result()
 house_tbl = [dict(row.items()) for row in house_tbl]
 house_tbl = [{str(k):str(v) for (k,v) in d.items()} for d in house_tbl]
 
+class SplitFn(beam.DoFn):
+    def process(self, element):
+        for i in element:
+            index, \
+            bill_id, \
+            amdt_id, \
+            first_name, \
+            last_name, \
+            party, \
+            state, \
+            vote_cast, \
+            vote_date, \
+            chamber, \
+            chamber_state = element.split(',')
+
+            d = {
+                'bill_id': bill_id,
+                'amdt_id': amdt_id,
+                'first_name': first_name,
+                'last_name': last_name,
+                'party': party,
+                'state': state,
+                'vote_cast': vote_cast,
+                'vote_date': vote_date,
+                'chamber': chamber,
+                'chamber_state': chamber_state
+            }
+            yield d
 
 # Runs the main part of the pipeline. Errors will be tagged, good votes will continue on to BQ.
 vote = (
     p
-    | beam.io.gcp.pubsub.ReadFromPubSub(
-        topic = None,
-        subscription = 'projects/{0}/subscriptions/{1}'
-            .format(project_id, subscription_name),
-        with_attributes = True)
+    | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/bill_votes/*.csv'.format(os.path.expanduser('~')),
+                                              skip_header_lines=1)
+    | 'Split Values' >> beam.ParDo(SplitFn())
     | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
     | 'Fix Value Types' >> beam.ParDo(pt.FixTypesFn(), int_lst=['vote_cast'])
     | 'Fix House First Names' >> beam.ParDo(pt.FixHouseFirstNameFn(), tbl=house_tbl)
