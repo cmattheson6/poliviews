@@ -10,13 +10,15 @@ from datetime import date
 import os
 import sys
 import unidecode
+import glob
 from subprocess import Popen
 
 file_dirname = '{0}/tmp/senate_members'.format(os.path.expanduser('~'))
 file_path = file_dirname + '/senate_members_{0}.csv'.format(date.today())
 rm_old_files = 'rm {0}/*'.format(file_dirname)
-cmd = Popen(rm_old_files, shell=True).stdout.read()
-print(cmd)
+if glob.glob(file_dirname + '*.csv') > 0:
+    cmd = Popen(rm_old_files, shell=True).stdout.read()
+    print(cmd)
 
 class SenateMembersPipeline(object):
     # publisher = pubsub.PublisherClient()
