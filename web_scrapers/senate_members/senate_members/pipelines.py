@@ -53,7 +53,7 @@ class SenateMembersPipeline(object):
 
         # Add the item as a row in the csv here
         item = {k: unidecode.unidecode(v) for (k, v) in item.items()}
-        item = {k: re.sub(',', '', v) for (k, v) in item.items()}
+        item = {k: re.sub('\,', '', v) for (k, v) in item.items()}
         self.lst.append(dict(item))
         logging.info('Appended item: {0}'.format(item))
         return item
