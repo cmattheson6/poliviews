@@ -33,7 +33,7 @@ topic_name = 'bill_info'
 subscription_name = 'bill_info_df'
 
 # Locations in BigQuery that this script uses to read/write.
-dataset_id = 'poliviews'
+dataset_id = 'runner_pipelines'
 bill_table_id = 'bill_info' # Location for writing any bill info
 nickname_table_id = 'nicknames' # Location to read list of any nicknames in order to properly edit politician info.
 
