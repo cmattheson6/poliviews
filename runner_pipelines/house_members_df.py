@@ -35,7 +35,7 @@ topic_name = 'house_pols'
 subscription_name = 'house_pols_df'
 
 # Locations in BigQuery that this script uses to read/write.
-dataset_id = 'runner_pipelines'
+dataset_id = 'poliviews'
 house_table_id = 'house' # Location for writing all Rep info
 pol_table_id = 'politicians' # Location for writing any new politicians
 nickname_table_id = 'nicknames' # Location to read list of any nicknames in order to properly edit politician info.

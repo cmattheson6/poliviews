@@ -34,7 +34,7 @@ topic_name = 'cosponsors'
 subscription_name = 'cosponsors_df'
 
 # Locations in BigQuery that this script uses to read/write.
-dataset_id = 'runner_pipelines'
+dataset_id = 'poliviews'
 cosponsors_table_id = 'bill_cosponsors'
 nickname_table_id = 'nicknames'
 
