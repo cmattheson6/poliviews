@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+encoding//congress_bill_info/pipelines.py=utf-8
+encoding//congress_bill_info/settings.py=utf-8
+encoding//congress_bill_info/spiders/bill_crawler.py=utf-8

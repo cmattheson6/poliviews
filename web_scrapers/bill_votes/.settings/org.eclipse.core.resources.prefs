@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//senate_votes/items.py=utf-8
+encoding//senate_votes/middlewares.py=utf-8
+encoding//senate_votes/pipelines.py=utf-8
+encoding//senate_votes/settings.py=utf-8
+encoding//senate_votes/spiders/house_votes.py=utf-8
+encoding//senate_votes/spiders/senate_votes.py=utf-8
+encoding//senate_votes/spiders/senate_votes2.py=utf-8
+encoding//senate_votes/spiders/vote_votes.py=utf-8
