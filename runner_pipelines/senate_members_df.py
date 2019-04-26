@@ -56,14 +56,14 @@ pol_full_lst = pol_attr_lst + error_attr_lst
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(streaming=False,
-                          runner='DirectRunner',
+                          runner='DataflowRunner',
                           project=project_id,
                           temp_location='gs://{0}/tmp'.format(project_id),
                           staging_location='gs://{0}/staging'.format(project_id))
 
 # This builds the Beam pipeline in order to run Dataflow
 p = beam.Pipeline(options=options)
-logging.info('Created Dataflow pipeline.')
+logging.info('Created Beam pipeline.')
 
 # This will pull in all of the recorded nicknames to compare to the incoming PubSubMessages. This is needed to filter
 # and normalize the data.
