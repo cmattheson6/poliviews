@@ -272,6 +272,7 @@ class AddDateFn(beam.DoFn):
         try:
             from datetime import date
             element['date'] = date.today().isoformat()
+            logging.info('{0}: {1}'.format(self.__class__.__name__, element))
             yield element
         except Exception as e:
             element['error_msg'] = e
