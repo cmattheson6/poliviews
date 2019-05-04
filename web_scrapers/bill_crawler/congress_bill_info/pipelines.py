@@ -23,14 +23,22 @@ from subprocess import Popen
 bill_file_dirname = '{0}/tmp/bill_info'.format(os.path.expanduser('~'))
 bill_file_path = bill_file_dirname + '/bill_info_{0}.csv'.format(date.today())
 rm_bill_files = 'rm {0}/*'.format(bill_file_dirname)
-bill_cmd = Popen(rm_bill_files, shell=True).stdout.read()
-print(bill_cmd)
+
+try:
+    cmd = Popen(rm_bill_files, shell=True).stdout.read()
+    print(cmd)
+except Exception as e:
+    print(e)
 
 cs_file_dirname = '{0}/tmp/cosponsors'.format(os.path.expanduser('~'))
 cs_file_path = cs_file_dirname + '/cosponsors_{0}.csv'.format(date.today())
 rm_cs_files = 'rm {0}/*'.format(cs_file_dirname)
-cs_cmd = Popen(rm_cs_files, shell=True).stdout.read()
-print(cs_cmd)
+
+try:
+    cmd = Popen(rm_cs_files, shell=True).stdout.read()
+    print(cmd)
+except Exception as e:
+    print(e)
 
 ### -------- Start of the pipeline -------- ###
 
