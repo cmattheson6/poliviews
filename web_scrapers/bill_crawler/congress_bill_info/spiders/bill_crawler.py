@@ -7,8 +7,7 @@ current bill list up to date.
 ### -------- Import all of the necessary files -------- ###
 import scrapy
 import re
-from datetime import datetime, timedelta
-from datetime import date
+from datetime import datetime, timedelta, date
 
 ### -------- Define all custom fxns here -------- ###
 
@@ -75,8 +74,8 @@ class BillCrawlerSpider(scrapy.Spider):
     # Set the name of the spider and the corresponding starting points of the scrape
     name = 'bill_crawler'
     allowed_domains = ['www.congress.gov']
-    start_urls = ['''https://www.congress.gov/search?q=%7B%22congress%22%3A%22{0}%22%
-                  2C%22source%22%3A%22legislation%22%7D&searchResultViewType=expanded&page=1'''
+    start_urls = ['https://www.congress.gov/search?q=%7B"congress"%3A"{0}'\
+    '"%2C"source"%3A"legislation"%7D&searchResultViewType=expanded'
                       .format(congress_num)]
 
     # The first parse will pull all URLs from the page that link to individual bills.
@@ -99,8 +98,9 @@ class BillCrawlerSpider(scrapy.Spider):
                 yield scrapy.Request(url = bill_url,
                                      callback = self.parse_bill)
             else:
-                yield scrapy.Request(url = bill_url,
-                                     callback = self.parse_bill) # Change to break after first pass at scraping site.
+                break
+            #     yield scrapy.Request(url = bill_url,
+            #                          callback = self.parse_bill) # Change to break after first pass at scraping site.
         
         # Because of the set-up of the site,
         # this section should only be used once to build a full database the first time
