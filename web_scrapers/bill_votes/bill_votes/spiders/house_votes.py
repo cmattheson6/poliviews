@@ -59,13 +59,16 @@ class HouseVotesSpider(scrapy.Spider):
             bill_date = bill_date + ", " + str(date.today().year)
             bill_date = datetime.strptime(bill_date, "%d-%b, %Y").date()
             # This will only pull in any votes that occurred yesterday otherwise it will be ignored.
+            if bill_date > date_yesterday:
+                pass
             if bill_date == date_yesterday:
                 # This request will link to the list of votes and make sure to retain the bill's congress.gov URL link.
                 request = scrapy.Request(url = vote_url, 
                                  callback = self.parse_votes)
                 request.meta['bill_url'] = bill_url
                 yield request
-            else: #CHANGE THIS TO 'PASS' WHEN ALL OF THIS YEAR HAS BEEN PROPERLY UPLOADED
+            else: #CHANGE THIS TO 'BREAK' WHEN ALL OF THIS YEAR HAS BEEN PROPERLY UPLOADED
+                # break
                 request = scrapy.Request(url = vote_url, 
                                  callback = self.parse_votes)
                 request.meta['bill_url'] = bill_url
