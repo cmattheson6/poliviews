@@ -113,15 +113,15 @@ clean_pols = pol[None]
 
 # A new Politician will only be published if thy are not already contained in the Politicians table. If they are new,
 # they will be properly uploaded. If they are not new, then they will be ignored in this pipeline.
-new_pol = (
-        clean_pols
-        | 'Filter Existing Pols' >> beam.ParDo(pt.NewPolsOnlyFn(), pol_tbl=pols_tbl)
-        | 'Filter Pol Keys' >> beam.ParDo(pt.FilterKeysFn(), attr_lst=pol_attr_lst)
-        | 'Write Pol to BQ' >> beam.io.WriteToBigQuery(
-            table=pol_spec,
-            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_NEVER
-        ))
+# new_pol = (
+#         clean_pols
+#         | 'Filter Existing Pols' >> beam.ParDo(pt.NewPolsOnlyFn(), pol_tbl=pols_tbl)
+#         | 'Filter Pol Keys' >> beam.ParDo(pt.FilterKeysFn(), attr_lst=pol_attr_lst)
+#         | 'Write Pol to BQ' >> beam.io.WriteToBigQuery(
+#             table=pol_spec,
+#             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+#             create_disposition=beam.io.BigQueryDisposition.CREATE_NEVER
+#         ))
 
 # A new Senator line will be published every day in this pipeline. We add today's date to record their time in office
 # and will upload a row signifying their time in office on that day.
