@@ -105,9 +105,9 @@ class BillCrawlerSpider(scrapy.Spider):
                     yield scrapy.Request(url = bill_url,
                                          callback = self.parse_bill)
                 else:
-                    break
-                #     yield scrapy.Request(url = bill_url,
-                #                          callback = self.parse_bill) # Change to break after first pass at scraping site.
+                    # break
+                    yield scrapy.Request(url = bill_url,
+                                         callback = self.parse_bill) # Change to break after first pass at scraping site.
             except:
                 pass
         
