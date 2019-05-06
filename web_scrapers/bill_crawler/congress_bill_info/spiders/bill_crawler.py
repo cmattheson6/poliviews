@@ -98,15 +98,18 @@ class BillCrawlerSpider(scrapy.Spider):
                 pass
 
             # The loop should stop here based on if the date of a bill was not from yesterday.
-            if bill_date > date_yesterday:
+            try:
+                if bill_date > date_yesterday:
+                    pass
+                elif bill_date == date_yesterday:
+                    yield scrapy.Request(url = bill_url,
+                                         callback = self.parse_bill)
+                else:
+                    break
+                #     yield scrapy.Request(url = bill_url,
+                #                          callback = self.parse_bill) # Change to break after first pass at scraping site.
+            except:
                 pass
-            elif bill_date == date_yesterday:
-                yield scrapy.Request(url = bill_url,
-                                     callback = self.parse_bill)
-            else:
-                break
-            #     yield scrapy.Request(url = bill_url,
-            #                          callback = self.parse_bill) # Change to break after first pass at scraping site.
         
         # Because of the set-up of the site,
         # this section should only be used once to build a full database the first time
