@@ -59,7 +59,7 @@ class CongressBillInfoPipeline(object):
     def process_item(self, item, spider):
         # Filters out any cosponsor items and only uploads bill items.
         if all([i in self.bill_info_keys for i in item.keys()]):
-            item = {k: unidecode.unidecode(v) for (k, v) in item.items()}
+            item = {k:(unidecode.unidecode(v) if v != None else None) for (k, v) in item.items()}
             self.lst.append(dict(item))
             logging.info('Appended item: {0}'.format(item))
             return item
@@ -86,7 +86,7 @@ class BillCosponsorsPipeline(object):
     def process_item(self, item, spider):
         # Filters out any cosponsor items and only uploads bill items.
         if all([i in self.cosponsor_keys for i in item.keys()]):
-            item = {k: unidecode.unidecode(v) for (k, v) in item.items()}
+            item = {k:(unidecode.unidecode(v) if v != None else None) for (k, v) in item.items()}
             self.lst.append(dict(item))
             logging.info('Appended item: {0}'.format(item))
             return item
