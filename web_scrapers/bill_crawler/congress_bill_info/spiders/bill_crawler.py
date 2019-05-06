@@ -83,9 +83,12 @@ class BillCrawlerSpider(scrapy.Spider):
         bill_table = response.xpath('.//li[@class="expanded"]')
         for i in bill_table:
             # Pulls and formats the bill date.
-            bill_date = i.xpath('.//span[@class="result-item"]/text()').extract()[2]
-            bill_date = datetime.strptime(bill_date, ' (Introduced %m/%d/%Y) ')
-            bill_date = bill_date.date()
+            bill_date = i.xpath('.//span[@class="result-item"]/text()').re_first(r'^.*Introduced.*$')
+            try:
+                bill_date = datetime.strptime(bill_date, ' (Introduced %m/%d/%Y) ')
+                bill_date = bill_date.date()
+            except:
+                bill_date = None
 
             # Pulls and formats the bill's URL
             bill_url = i.xpath('.//a/@href').re_first(r'^.*/bill/.*/.*/[0-9]*\?.*$')
