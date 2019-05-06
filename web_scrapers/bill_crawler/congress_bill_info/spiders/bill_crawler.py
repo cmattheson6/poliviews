@@ -92,7 +92,10 @@ class BillCrawlerSpider(scrapy.Spider):
 
             # Pulls and formats the bill's URL
             bill_url = i.xpath('.//a/@href').re_first(r'^.*/bill/.*/.*/[0-9]*\?.*$')
-            bill_url = bill_url[0:re.search(r'\?', bill_url).start()]
+            try:
+                bill_url = bill_url[0:re.search(r'\?', bill_url).start()]
+            except:
+                pass
 
             # The loop should stop here based on if the date of a bill was not from yesterday.
             if bill_date > date_yesterday:
