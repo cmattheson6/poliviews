@@ -137,9 +137,10 @@ class BillCrawlerSpider(scrapy.Spider):
         bill_title = bill_info['bill_title']
 
         bill_subtitle = response.xpath(".//table[@class='standard01']/tr/td/text()").extract_first()
-        bill_title = bill_title + bill_subtitle
+        if bill_title != None:
+            bill_title = bill_title + bill_subtitle
 
-        # Get all sponsor info parsed from raw info
+            # Get all sponsor info parsed from raw info
         sponsor_info = response.xpath(".//table[@class='standard01']/tr/td/a/text()").re_first(r'^.*\[.*\]$')
         sponsor_info = create_pol_dict(sponsor_info)
 
