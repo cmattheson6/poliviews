@@ -34,7 +34,7 @@ TOPIC = 'scrapy'
 # script_path = os.path.abspath(os.path.join(os.getcwd(), 'logger_sample_task.py'))
 #
 # dirname = os.path.dirname(__file__)
-# filename = os.path.join(dirname, 'poliviews/senate_members_df.py')
+# filename = os.path.join(dirname, 'runner_pipelines/senate_members_df.py')
 dataflow_task = "cd ~/dataflow_scripts/web_scrapers/senate_members " \
 "&& scrapy crawl gen_senate " \
 "&& cd ~/dataflow_scripts/web_scrapers/house-members "\

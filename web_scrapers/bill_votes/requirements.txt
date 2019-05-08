@@ -1,3 +1,2 @@
 google-cloud-pubsub==0.37.2
 pyasn1==0.4.1
-pandas==0.24.2

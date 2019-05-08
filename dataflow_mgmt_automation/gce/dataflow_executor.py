@@ -34,13 +34,12 @@ TOPIC = 'test'
 script_path = os.path.abspath(os.path.join(os.getcwd(), 'logger_sample_task.py'))
 
 dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, 'poliviews/senate_members_df.py')
+filename = os.path.join(dirname, 'runner_pipelines/senate_members_df.py')
 dataflow_task = "git pull origin " \
-              "&& python ../../poliviews/senate_members_df.py " \
-              " --setup=../../poliviews/setup.py --experiments=allow_non_updatable_job parameter " \
-              "&& python ../../poliviews/house_members_df.py " \
-              " --setup=../../poliviews/setup.py --experiments=allow_non_updatable_job parameter "
-"sleep 300; gcloud beta dataflow jobs drain *"
+              "&& python ../../runner_pipelines/senate_members_df.py " \
+              " --setup=../../runner_pipelines/setup.py --experiments=allow_non_updatable_job parameter " \
+              "&& python ../../runner_pipelines/house_members_df.py " \
+              " --setup=../../runner_pipelines/setup.py --experiments=allow_non_updatable_job parameter "
 
 root_logger = logging.getLogger('cron_executor')
 root_logger.setLevel(logging.DEBUG)

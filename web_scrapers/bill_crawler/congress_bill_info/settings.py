@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for senate_members project
+# Scrapy settings for congress_bill_info project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,14 +9,14 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'senate_members'
+BOT_NAME = 'congress_bill_info'
 
-SPIDER_MODULES = ['senate_members.spiders']
-NEWSPIDER_MODULE = 'senate_members.spiders'
+SPIDER_MODULES = ['congress_bill_info.spiders']
+NEWSPIDER_MODULE = 'congress_bill_info.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'senate_members (+http://www.yourdomain.com)'
+#USER_AGENT = 'congress_bill_info (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -47,13 +47,13 @@ DOWNLOAD_DELAY = 1
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'senate_members.middlewares.SenateMembersSpiderMiddleware': 543,
+#    'congress_bill_info.middlewares.CongressBillInfoSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'senate_members.middlewares.SenateMembersDownloaderMiddleware': 543,
+#    'congress_bill_info.middlewares.CongressBillInfoDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,7 +65,8 @@ DOWNLOAD_DELAY = 1
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'senate_members.pipelines.SenateMembersPipeline': 300,
+    'congress_bill_info.pipelines.CongressBillInfoPipeline': 100,
+    'congress_bill_info.pipelines.BillCosponsorsPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from scrapy.settings.default_settings import DUPEFILTER_CLASS
 
-# Scrapy settings for senate_members project
+# Scrapy settings for bill_votes project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,18 +10,17 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'senate_members'
+BOT_NAME = 'bill_votes'
 
-SPIDER_MODULES = ['senate_members.spiders']
-NEWSPIDER_MODULE = 'senate_members.spiders'
-
+SPIDER_MODULES = ['bill_votes.spiders']
+NEWSPIDER_MODULE = 'bill_votes.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'senate_members (+http://www.yourdomain.com)'
+#USER_AGENT = 'bill_votes (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
-
+# DUPEFILTER_DEBUG = True
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 CONCURRENT_REQUESTS = 2
 
@@ -47,13 +47,13 @@ DOWNLOAD_DELAY = 1
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'senate_members.middlewares.SenateMembersSpiderMiddleware': 543,
+#    'bill_votes.middlewares.SenateVotesSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'senate_members.middlewares.SenateMembersDownloaderMiddleware': 543,
+#    'bill_votes.middlewares.SenateVotesDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,7 +65,7 @@ DOWNLOAD_DELAY = 1
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'senate_members.pipelines.SenateMembersPipeline': 300,
+    'bill_votes.pipelines.BillVotesPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
