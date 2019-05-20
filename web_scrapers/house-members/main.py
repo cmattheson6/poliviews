@@ -2,7 +2,7 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 from house_members.spiders.house_pols import HousePolsSpider
 
-def scrapy_test():
+def main(data, context):
     process = CrawlerProcess()
     process.crawl(HousePolsSpider)
     process.start()
