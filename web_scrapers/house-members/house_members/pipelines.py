@@ -17,7 +17,7 @@ project_id = 'politics-data-tracker-1'
 bucket_name = 'poliviews'
 pipeline_name = 'house_members'
 file_dirname = 'gs://{0}/{1}/csvs/{2}'.format(project_id, bucket_name, pipeline_name)
-file_path = file_dirname + '/{0}_{1}.csv'.format(date.today())
+file_path = file_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
 rm_old_files = 'rm {0}/*'.format(file_dirname)
 try:
     cmd = Popen(rm_old_files, shell=True).stdout.read()

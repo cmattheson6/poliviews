@@ -40,12 +40,21 @@ house_table_id = 'house' # Location for writing all Rep info
 pol_table_id = 'politicians' # Location for writing any new politicians
 nickname_table_id = 'nicknames' # Location to read list of any nicknames in order to properly edit politician info.
 
+
 # PubSub will only accept long strings as names of exact locations of BigQuery tables.
 pol_spec = '{0}:{1}.{2}'.format(project_id, dataset_id, pol_table_id)
 house_spec = '{0}:{1}.{2}'.format(project_id, dataset_id, house_table_id)
 
 # Also included is the current name of the script
 script_name = os.path.basename(sys.argv[0])
+
+
+# Set the location of the CSVs for processing
+bucket_name = 'poliviews'
+pipeline_name = 'house_members'
+file_dirname = 'gs://{0}/{1}/csvs/{2}/*.csv'.format(project_id, bucket_name, pipeline_name)
+input_file_path = file_dirname + '/*.csv'
+error_file_path = 'gs://{0}/error_files/{1}'.format(project_id, script_name)
 
 # This is a list of all attributes that will be present in either a good vote or error vote. This will be used
 # to filter and/or order the attributes accordingly.
@@ -130,7 +139,7 @@ class SplitFn(beam.DoFn):
 # Runs the main part of the pipeline. Errors will be tagged, clean politicians will continue on to BQ.
 pol = (
         p
-        | 'Read from CSV' >> beam.io.ReadFromText('{0}/tmp/house_members/*.csv'.format(os.path.expanduser('~')),
+        | 'Read from CSV' >> beam.io.ReadFromText('gs://{0}/tmp/house_members/*.csv'.format(os.path.expanduser('~')),
                                                   skip_header_lines=1)
         | 'Split Values' >> beam.ParDo(SplitFn())
         # | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
