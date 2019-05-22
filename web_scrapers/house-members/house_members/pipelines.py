@@ -19,6 +19,9 @@ pipeline_name = 'house_members'
 file_dirname = 'gs://{0}/{1}/csvs/{2}'.format(project_id, bucket_name, pipeline_name)
 file_path = file_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
 rm_old_files = 'rm {0}/*'.format(file_dirname)
+
+logging.basicConfig(level=logging.INFO)
+
 try:
     cmd = Popen(rm_old_files, shell=True).stdout.read()
     print(cmd)

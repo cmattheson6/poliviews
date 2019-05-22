@@ -8,6 +8,8 @@ import scrapy
 import logging
 from house_members.items import HouseMembersItem
 
+logging.basicConfig(level=logging.INFO)
+
 class HousePolsSpider(scrapy.Spider):
     name = "house_pols"
 
