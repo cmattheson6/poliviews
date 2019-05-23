@@ -12,3 +12,7 @@ def main(data, context):
     process.crawl(HousePolsSpider)
     process.start()
     logging.info('Start HousePolsSpider crawl.')
+
+if __name__ == '__main__':
+    main()
+
