@@ -6,7 +6,6 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 def main(data, context):
-    logging.info('Started main function.')
     process = CrawlerProcess()
     logging.info('Initiated CrawlerProcess.')
     process.crawl(HousePolsSpider)
