@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from scrapy.settings.default_settings import CONCURRENT_ITEMS
+from scrapy.settings import Settings
 
 # Scrapy settings for house_members project
 #
@@ -90,3 +91,12 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+house_members_settings = Settings(values =
+                                  {
+                                      'BOT_NAME':BOT_NAME,
+                                      'CONCURRENT_ITEMS':CONCURRENT_ITEMS,
+                                      'DOWNLOAD_DELAY':DOWNLOAD_DELAY,
+                                      'ITEM_PIPELINES':ITEM_PIPELINES
+                                  }
+)
