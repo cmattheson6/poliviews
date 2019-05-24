@@ -1,3 +1,4 @@
 google-cloud-pubsub==0.37.2
 pyasn1==0.4.1
 scrapy==1.6.0
+cloudstorage==0.9.0

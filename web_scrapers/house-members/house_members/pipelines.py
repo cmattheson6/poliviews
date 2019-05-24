@@ -12,6 +12,8 @@ import sys
 import unidecode
 from subprocess import Popen
 import re
+import shutil
+import cloudstorage as gcs
 
 project_id = 'politics-data-tracker-1'
 bucket_name = 'poliviews'
@@ -23,14 +25,18 @@ rm_old_files = 'rm {0}/*'.format(file_dirname)
 logging.basicConfig(level=logging.INFO)
 
 try:
-    cmd = Popen(rm_old_files, shell=True).stdout.read()
-    print(cmd)
+    shutil.rmtree(file_dirname)
+    logging.info('Removed folder at {0}'.format(file_dirname))
 except Exception as e:
-    print(e)
+    logging.info(e)
 
 class PoliticiansPipeline(object):
     # set csv location and open it\
-    f= open(file_path, mode='a+')
+    gcs_file = gcs.open(
+        file_path,
+        'w',
+        content_type='.csv'
+    )
     lst = []
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
@@ -52,5 +58,6 @@ class PoliticiansPipeline(object):
                                    'state',
                                    'district'])
         df.to_csv(file_path)
+        # self.gcs_file.write()
         logging.info('Created CSV at {0}'.format(file_path))
-        self.f.close()
+        self.gcs_file.close()
