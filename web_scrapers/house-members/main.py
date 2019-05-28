@@ -10,9 +10,9 @@ def main(data, context):
     process = CrawlerProcess(settings=house_members_settings)
     logging.info('Initiated CrawlerProcess.')
     process.crawl(HousePolsSpider)
-    process.start()
     logging.info('Start HousePolsSpider crawl.')
+    process.start()
 
 if __name__ == '__main__':
-    main()
+    main(data=None, context=None)
 

@@ -12,13 +12,17 @@ import sys
 import unidecode
 from subprocess import Popen
 import re
+from google.cloud import storage
 
 project_id = 'politics-data-tracker-1'
 bucket_name = 'poliviews'
 pipeline_name = 'house_members'
-file_dirname = 'gs://{0}/{1}/csvs/{2}'.format(project_id, bucket_name, pipeline_name)
-file_path = file_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
-rm_old_files = 'rm {0}/*'.format(file_dirname)
+gcs_dirname = 'gs://{0}/{1}/csvs/{2}'.format(project_id, bucket_name, pipeline_name)
+gcs_path = gcs_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
+blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
+tmp_dirname = '~/tmp'
+tmp_path = tmp_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
+rm_old_files = 'rm {0}/*'.format(gcs_dirname)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -29,8 +33,9 @@ except Exception as e:
     print(e)
 
 class PoliticiansPipeline(object):
-    # set csv location and open it\
-    f= open(file_path, mode='a+')
+    # set csv location and open it
+    f= open(tmp_path, mode='a+')
+    storage_client = storage.Client()
     lst = []
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
@@ -51,6 +56,12 @@ class PoliticiansPipeline(object):
                                    'party',
                                    'state',
                                    'district'])
-        df.to_csv(file_path)
-        logging.info('Created CSV at {0}'.format(file_path))
+        df.to_csv(tmp_path)
+        logging.info('Created CSV at {0}'.format(tmp_path))
         self.f.close()
+        bucket = self.storage_client.get_bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+        blob.upload_from_filename(tmp_path)
+        logging.info('File {} uploaded to {}.'.format(
+            tmp_path,
+            gcs_path))
