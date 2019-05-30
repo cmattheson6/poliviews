@@ -14,6 +14,7 @@ from subprocess import Popen
 import re
 from google.cloud import storage
 
+gcs_creds = 'C:/Users/cammatth/Downloads/gce_creds.json'
 project_id = 'politics-data-tracker-1'
 bucket_name = 'poliviews'
 pipeline_name = 'house_members'
@@ -35,19 +36,22 @@ except Exception as e:
 class PoliticiansPipeline(object):
     # set csv location and open it
     f= open(tmp_path, mode='a+')
-    storage_client = storage.Client()
+    # storage_client = storage.Client()  # for cloud-based production
+    storage_client = storage.Client.from_service_account_json(gcs_creds)  # only for local testing
     lst = []
+
     def process_item(self, item, spider):
         """We need to establish a an authorized connection to Google Cloud in order to upload to Google Pub/Sub.
         In order to host the spiders on Github, the service account credentials are housed on the Scrapy platform
         and dynamically created in the script."""
 
         # Add the item as a row in the csv here
-        item = {k:unidecode.unidecode(v) for (k,v) in item.items()}
+        item = {k:unidecode.unidecode(v) for (k, v) in item.items()}
         item = {k: re.sub('\,', '', v) for (k, v) in item.items()}
         self.lst.append(dict(item))
         logging.info('Appended item: {0}'.format(item))
         return item
+
     def close_spider(self, spider):
         # send all scraped items to a CSV for processing by Dataflow
         df = pd.DataFrame(self.lst,
@@ -62,6 +66,6 @@ class PoliticiansPipeline(object):
         bucket = self.storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
         blob.upload_from_filename(tmp_path)
-        logging.info('File {} uploaded to {}.'.format(
+        logging.info('File {0} uploaded to {1}.'.format(
             tmp_path,
             gcs_path))
