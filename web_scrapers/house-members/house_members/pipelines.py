@@ -12,16 +12,16 @@ import sys
 import unidecode
 from subprocess import Popen
 import re
-from google.cloud import storage
+# from google.cloud import storage
 
-gcs_creds = 'C:/Users/cammatth/Downloads/gce_creds.json'
+gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
 project_id = 'politics-data-tracker-1'
 bucket_name = 'poliviews'
 pipeline_name = 'house_members'
 gcs_dirname = 'gs://{0}/{1}/csvs/{2}'.format(project_id, bucket_name, pipeline_name)
 gcs_path = gcs_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
 blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
-tmp_dirname = '~/tmp'
+tmp_dirname = '{0}/tmp'.format(os.path.expanduser('~')).replace('\\', '/')
 tmp_path = tmp_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
 rm_old_files = 'rm {0}/*'.format(gcs_dirname)
 
@@ -35,9 +35,11 @@ except Exception as e:
 
 class PoliticiansPipeline(object):
     # set csv location and open it
-    f= open(tmp_path, mode='a+')
+    if not os.path.exists(tmp_dirname):
+        os.makedirs(tmp_dirname)
+    f = open(tmp_path, mode='a+')
     # storage_client = storage.Client()  # for cloud-based production
-    storage_client = storage.Client.from_service_account_json(gcs_creds)  # only for local testing
+    # storage_client = storage.Client.from_service_account_json(gcs_creds)  # only for local testing
     lst = []
 
     def process_item(self, item, spider):
@@ -63,9 +65,9 @@ class PoliticiansPipeline(object):
         df.to_csv(tmp_path)
         logging.info('Created CSV at {0}'.format(tmp_path))
         self.f.close()
-        bucket = self.storage_client.get_bucket(bucket_name)
-        blob = bucket.blob(blob_name)
-        blob.upload_from_filename(tmp_path)
+        # bucket = self.storage_client.get_bucket(bucket_name)
+        # blob = bucket.blob(blob_name)
+        # blob.upload_from_filename(tmp_path)
         logging.info('File {0} uploaded to {1}.'.format(
             tmp_path,
             gcs_path))
