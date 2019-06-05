@@ -22,8 +22,11 @@ def main(data, context):
     process.crawl(HousePolsSpider)
     logging.info('Start HousePolsSpider crawl.')
     process.start()
-    storage_client = storage.Client()  # for cloud-based production
-    # storage_client = storage.Client.from_service_account_json(gcs_creds)
+    try:
+        storage_client = storage.Client()  # for cloud-based production
+    except:
+        logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
+        storage_client = storage.Client.from_service_account_json(gcs_creds)
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(blob_name)
     blob.upload_from_filename(tmp_path)
