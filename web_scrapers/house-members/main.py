@@ -24,6 +24,7 @@ def main(data, context):
     process.start()
     try:
         storage_client = storage.Client()  # for cloud-based production
+        logging.info('Accessed Google Cloud Storage.')
     except:
         logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
         storage_client = storage.Client.from_service_account_json(gcs_creds)
