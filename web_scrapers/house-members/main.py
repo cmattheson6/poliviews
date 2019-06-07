@@ -4,6 +4,7 @@ from house_members.spiders.house_pols import HousePolsSpider
 from house_members.settings import house_members_settings
 import logging
 from google.cloud import storage
+import google.cloud.logging as logger
 from house_members.pipelines import tmp_path
 from datetime import date
 
@@ -23,7 +24,9 @@ def main(data, context):
     process.start()
     try:
         storage_client = storage.Client()  # for cloud-based production
-        logging.info('Accessed Google Cloud Storage.')
+        stackdriver = logger.Client()
+        stackdriver.setup_logging()
+        logging.info('Accessed Stackdriver logging.')
     except:
         logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
         storage_client = storage.Client.from_service_account_json(gcs_creds)
