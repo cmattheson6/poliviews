@@ -4,7 +4,6 @@ The rest of the processing will take place in Dataflow.
 """
 
 
-import logging
 import pandas as pd
 from datetime import date
 import os
@@ -13,6 +12,11 @@ import unidecode
 from subprocess import Popen
 import re
 # from google.cloud import storage
+
+
+import logging
+from google.cloud import storage
+import google.cloud.logging as logger
 
 gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
 project_id = 'politics-data-tracker-1'
@@ -69,5 +73,19 @@ class PoliticiansPipeline(object):
         # blob = bucket.blob(blob_name)
         # blob.upload_from_filename(tmp_path)
         logging.info('File {0} uploaded to {1}.'.format(
+            tmp_path,
+            gcs_path))
+        try:
+            storage_client = storage.Client()  # for cloud-based production
+            stackdriver = logger.Client()
+            stackdriver.setup_logging()
+            logging.info('Accessed Stackdriver logging.')
+        except:
+            logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
+            storage_client = storage.Client.from_service_account_json(gcs_creds)
+        bucket = storage_client.get_bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+        blob.upload_from_filename(tmp_path)
+        logging.info('File {0} uploaded to {1}'.format(
             tmp_path,
             gcs_path))
