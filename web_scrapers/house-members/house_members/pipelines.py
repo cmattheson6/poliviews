@@ -59,6 +59,16 @@ class PoliticiansPipeline(object):
         return item
 
     def close_spider(self, spider):
+        try:
+            storage_client = storage.Client()  # for cloud-based production
+            stackdriver = logger.Client()
+            stackdriver.setup_logging()
+            logging.info('Accessed Stackdriver logging.')
+            tmp_dirname = '/tmp'.replace('\\', '/')
+            tmp_path = tmp_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
+        except:
+            logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
+            storage_client = storage.Client.from_service_account_json(gcs_creds)
         # send all scraped items to a CSV for processing by Dataflow
         df = pd.DataFrame(self.lst,
                           columns=['first_name',
@@ -75,14 +85,7 @@ class PoliticiansPipeline(object):
         logging.info('File {0} uploaded to {1}.'.format(
             tmp_path,
             gcs_path))
-        try:
-            storage_client = storage.Client()  # for cloud-based production
-            stackdriver = logger.Client()
-            stackdriver.setup_logging()
-            logging.info('Accessed Stackdriver logging.')
-        except:
-            logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
-            storage_client = storage.Client.from_service_account_json(gcs_creds)
+
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
         blob.upload_from_filename(tmp_path)
