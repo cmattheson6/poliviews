@@ -1,7 +1,7 @@
 import scrapy
-from scrapy.crawler import CrawlerProcess
-from house_members.spiders.house_pols import HousePolsSpider
-from house_members.settings import house_members_settings
+# from scrapy.crawler import CrawlerProcess
+# from house_members.spiders.house_pols import HousePolsSpider
+# from house_members.settings import house_members_settings
 import logging
 from google.cloud import storage
 import google.cloud.logging as logger
