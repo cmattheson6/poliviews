@@ -8,12 +8,16 @@ import google.cloud.logging as logger
 from house_members.pipelines import tmp_path
 from datetime import date
 
+logging.info('Imported modules...')
+
 gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
 project_id = 'politics-data-tracker-1'
 bucket_name = 'poliviews'
 pipeline_name = 'house_members'
 blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
 gcs_path = 'gs://' + bucket_name + '/' + blob_name
+
+logging.info('Set module\'s variables...')
 
 def main(data, context):
     try:
