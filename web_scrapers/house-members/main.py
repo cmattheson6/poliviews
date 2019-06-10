@@ -1,23 +1,21 @@
+import scrapy
+from scrapy.crawler import CrawlerProcess
+from house_members.spiders.house_pols import HousePolsSpider
+from house_members.settings import house_members_settings
+import logging
+from google.cloud import storage
+import google.cloud.logging as logger
+from house_members.pipelines import tmp_path
+from datetime import date
 
+gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
+project_id = 'politics-data-tracker-1'
+bucket_name = 'poliviews'
+pipeline_name = 'house_members'
+blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
+gcs_path = 'gs://' + bucket_name + '/' + blob_name
 
 def main(data, context):
-    import scrapy
-    from scrapy.crawler import CrawlerProcess
-    from house_members.spiders.house_pols import HousePolsSpider
-    from house_members.settings import house_members_settings
-    import logging
-    from google.cloud import storage
-    import google.cloud.logging as logger
-    from house_members.pipelines import tmp_path
-    from datetime import date
-
-    gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
-    project_id = 'politics-data-tracker-1'
-    bucket_name = 'poliviews'
-    pipeline_name = 'house_members'
-    blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
-    gcs_path = 'gs://' + bucket_name + '/' + blob_name
-
     try:
         storage_client = storage.Client()  # for cloud-based production
         stackdriver = logger.Client()
