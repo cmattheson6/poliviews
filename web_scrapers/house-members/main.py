@@ -1,28 +1,28 @@
+#
+# import logging
+# from google.cloud import storage
+# import google.cloud.logging as logger
+# from datetime import date
+#
+# logging.info('Imported modules...')
+#
+# gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
+# project_id = 'politics-data-tracker-1'
+# bucket_name = 'poliviews'
+# pipeline_name = 'house_members'
+# blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
+# gcs_path = 'gs://' + bucket_name + '/' + blob_name
+#
+# logging.info('Set module\'s variables...')
 
-import logging
-from google.cloud import storage
-import google.cloud.logging as logger
-from datetime import date
-
-logging.info('Imported modules...')
-
-gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
-project_id = 'politics-data-tracker-1'
-bucket_name = 'poliviews'
-pipeline_name = 'house_members'
-blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
-gcs_path = 'gs://' + bucket_name + '/' + blob_name
-
-logging.info('Set module\'s variables...')
-
-try:
-    storage_client = storage.Client()  # for cloud-based production
-    # stackdriver = logger.Client()
-    # stackdriver.setup_logging()
-    logging.info('Accessed Stackdriver logging.')
-except:
-    logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
-    storage_client = storage.Client.from_service_account_json(gcs_creds)
+# try:
+#     storage_client = storage.Client()  # for cloud-based production
+#     # stackdriver = logger.Client()
+#     # stackdriver.setup_logging()
+#     logging.info('Accessed Stackdriver logging.')
+# except:
+#     logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
+#     storage_client = storage.Client.from_service_account_json(gcs_creds)
 
 def main(data, context):
     return "Hello World."
