@@ -1,11 +1,7 @@
-import scrapy
-from scrapy.crawler import CrawlerProcess
-# from house_members.spiders.house_pols import HousePolsSpider
-from house_members.settings import house_members_settings
+
 import logging
 from google.cloud import storage
 import google.cloud.logging as logger
-from house_members.pipelines import tmp_path
 from datetime import date
 
 logging.info('Imported modules...')
@@ -28,18 +24,23 @@ def main(data, context):
     except:
         logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
         storage_client = storage.Client.from_service_account_json(gcs_creds)
+    # from house_members.pipelines import tmp_path
+    # import scrapy
+    # from scrapy.crawler import CrawlerProcess
+    # # from house_members.spiders.house_pols import HousePolsSpider
+    # from house_members.settings import house_members_settings
     # process = CrawlerProcess(settings=house_members_settings)
     # logging.info('Initiated CrawlerProcess.')
     # process.crawl(HousePolsSpider)
     # logging.info('Start HousePolsSpider crawl.')
     # process.start()
 
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    blob.upload_from_filename(tmp_path)
-    logging.info('File {0} uploaded to {1}'.format(
-        tmp_path,
-        gcs_path))
+    # bucket = storage_client.get_bucket(bucket_name)
+    # blob = bucket.blob(blob_name)
+    # blob.upload_from_filename(tmp_path)
+    # logging.info('File {0} uploaded to {1}'.format(
+    #     tmp_path,
+    #     gcs_path))
 
 
 if __name__ == '__main__':
