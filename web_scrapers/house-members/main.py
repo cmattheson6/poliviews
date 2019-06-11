@@ -25,7 +25,7 @@ except:
     storage_client = storage.Client.from_service_account_json(gcs_creds)
 
 def main(data, context):
-    pass
+    return "Hello World."
     # from house_members.pipelines import tmp_path
     # import scrapy
     # from scrapy.crawler import CrawlerProcess
