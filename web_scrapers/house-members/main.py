@@ -15,15 +15,17 @@ gcs_path = 'gs://' + bucket_name + '/' + blob_name
 
 logging.info('Set module\'s variables...')
 
+try:
+    storage_client = storage.Client()  # for cloud-based production
+    # stackdriver = logger.Client()
+    # stackdriver.setup_logging()
+    logging.info('Accessed Stackdriver logging.')
+except:
+    logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
+    storage_client = storage.Client.from_service_account_json(gcs_creds)
+
 def main(data, context):
-    try:
-        storage_client = storage.Client()  # for cloud-based production
-        stackdriver = logger.Client()
-        stackdriver.setup_logging()
-        logging.info('Accessed Stackdriver logging.')
-    except:
-        logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
-        storage_client = storage.Client.from_service_account_json(gcs_creds)
+    pass
     # from house_members.pipelines import tmp_path
     # import scrapy
     # from scrapy.crawler import CrawlerProcess
