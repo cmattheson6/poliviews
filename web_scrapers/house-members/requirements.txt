@@ -1,4 +1,0 @@
-pyasn1==0.4.1
-scrapy==1.6.0
-google-cloud-storage==1.16.0
-google-cloud-logging==1.11.0
