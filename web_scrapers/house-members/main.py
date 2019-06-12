@@ -29,13 +29,13 @@ def main(data, context):
     process.crawl(HousePolsSpider)
     logging.info('Start HousePolsSpider crawl.')
     process.start()
-
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    blob.upload_from_filename(tmp_path)
-    logging.info('File {0} uploaded to {1}'.format(
-        tmp_path,
-        gcs_path))
+    #
+    # bucket = storage_client.get_bucket(bucket_name)
+    # blob = bucket.blob(blob_name)
+    # blob.upload_from_filename(tmp_path)
+    # logging.info('File {0} uploaded to {1}'.format(
+    #     tmp_path,
+    #     gcs_path))
 
 
 if __name__ == '__main__':
