@@ -1,3 +1,5 @@
+import scrapy
+
 def main(data, context):
     pass
 
