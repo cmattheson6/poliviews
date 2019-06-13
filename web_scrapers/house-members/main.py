@@ -8,7 +8,22 @@ import google.cloud.logging as logger
 from house_members.pipelines import tmp_path
 from datetime import date
 
+gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
+project_id = 'politics-data-tracker-1'
+bucket_name = 'poliviews'
+pipeline_name = 'house_members'
+blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
+gcs_path = 'gs://' + bucket_name + '/' + blob_name
+
 def main(data, context):
+    try:
+        storage_client = storage.Client()  # for cloud-based production
+        stackdriver = logger.Client()
+        stackdriver.setup_logging()
+        logging.info('Accessed Stackdriver logging.')
+    except:
+        logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
+        storage_client = storage.Client.from_service_account_json(gcs_creds)
     pass
 
 if __name__ == '__main__':
