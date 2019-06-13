@@ -25,6 +25,12 @@ def main(data, context):
         logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
         storage_client = storage.Client.from_service_account_json(gcs_creds)
 
+    process = CrawlerProcess(settings=house_members_settings)
+    logging.info('Initiated CrawlerProcess.')
+    process.crawl(HousePolsSpider)
+    logging.info('Start HousePolsSpider crawl.')
+    process.start()
+
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(blob_name)
     blob.upload_from_filename(tmp_path)
