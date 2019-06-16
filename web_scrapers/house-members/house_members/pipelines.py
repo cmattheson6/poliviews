@@ -25,7 +25,8 @@ pipeline_name = 'house_members'
 gcs_dirname = 'gs://{0}/{1}/csvs/{2}'.format(project_id, bucket_name, pipeline_name)
 gcs_path = gcs_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
 blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
-tmp_dirname = '{0}/tmp'.format(os.path.expanduser('~')).replace('\\', '/')
+# tmp_dirname = '{0}/tmp'.format(os.path.expanduser('~')).replace('\\', '/')
+tmp_dirname = '{0}'.format(os.path.expanduser('~')).replace('\\', '/')
 tmp_path = tmp_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
 rm_old_files = 'rm {0}/*'.format(gcs_dirname)
 
@@ -42,6 +43,7 @@ class PoliticiansPipeline(object):
     if not os.path.exists(tmp_dirname):
         os.makedirs(tmp_dirname)
     f = open(tmp_path, mode='a+')
+    logging.info('Created file at {0}'.format(tmp_path))
     # storage_client = storage.Client()  # for cloud-based production
     # storage_client = storage.Client.from_service_account_json(gcs_creds)  # only for local testing
     lst = []
@@ -59,16 +61,16 @@ class PoliticiansPipeline(object):
         return item
 
     def close_spider(self, spider):
-        try:
-            storage_client = storage.Client()  # for cloud-based production
-            stackdriver = logger.Client()
-            stackdriver.setup_logging()
-            logging.info('Accessed Stackdriver logging.')
-            tmp_dirname = '/tmp'.replace('\\', '/')
-            tmp_path = tmp_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
-        except:
-            logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
-            storage_client = storage.Client.from_service_account_json(gcs_creds)
+        # try:
+        #     storage_client = storage.Client()  # for cloud-based production
+        #     stackdriver = logger.Client()
+        #     stackdriver.setup_logging()
+        #     logging.info('Accessed Stackdriver logging.')
+        #     tmp_dirname = '/tmp'.replace('\\', '/')
+        #     tmp_path = tmp_dirname + '/{0}_{1}.csv'.format(pipeline_name, date.today())
+        # except:
+        #     logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
+        #     storage_client = storage.Client.from_service_account_json(gcs_creds)
         # send all scraped items to a CSV for processing by Dataflow
         df = pd.DataFrame(self.lst,
                           columns=['first_name',
@@ -82,13 +84,13 @@ class PoliticiansPipeline(object):
         # bucket = self.storage_client.get_bucket(bucket_name)
         # blob = bucket.blob(blob_name)
         # blob.upload_from_filename(tmp_path)
-        logging.info('File {0} uploaded to {1}.'.format(
-            tmp_path,
-            gcs_path))
+        # logging.info('File {0} uploaded to {1}.'.format(
+        #     tmp_path,
+        #     gcs_path))
 
-        bucket = storage_client.get_bucket(bucket_name)
-        blob = bucket.blob(blob_name)
-        blob.upload_from_filename(tmp_path)
-        logging.info('File {0} uploaded to {1}'.format(
-            tmp_path,
-            gcs_path))
+        # bucket = storage_client.get_bucket(bucket_name)
+        # blob = bucket.blob(blob_name)
+        # blob.upload_from_filename(tmp_path)
+        # logging.info('File {0} uploaded to {1}'.format(
+        #     tmp_path,
+        #     gcs_path))

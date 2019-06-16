@@ -24,6 +24,7 @@ def main(data, context):
     except:
         logging.info('Unable to passively access Google Cloud Storage. Attempting to access credentials ...')
         storage_client = storage.Client.from_service_account_json(gcs_creds)
+
     process = CrawlerProcess(settings=house_members_settings)
     logging.info('Initiated CrawlerProcess.')
     process.crawl(HousePolsSpider)
@@ -36,7 +37,7 @@ def main(data, context):
     logging.info('File {0} uploaded to {1}'.format(
         tmp_path,
         gcs_path))
-
+    pass
 
 if __name__ == '__main__':
     main(data=None, context=None)
