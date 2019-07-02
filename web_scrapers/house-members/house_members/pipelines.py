@@ -77,7 +77,8 @@ class PoliticiansPipeline(object):
                                    'last_name',
                                    'party',
                                    'state',
-                                   'district'])
+                                   'district',
+                                   'date'])
         df.to_csv(tmp_path)
         logging.info('Created CSV at {0}'.format(tmp_path))
         self.f.close()

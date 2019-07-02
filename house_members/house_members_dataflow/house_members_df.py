@@ -11,6 +11,7 @@ formats and filters the data, and then sends along the clean data to BQ for stor
 import logging
 import os
 import sys
+from datetime import date
 
 # Pull in all Pubsub, Dataflow, and BigQuery modules
 from google.cloud import pubsub
@@ -56,6 +57,14 @@ file_dirname = 'gs://{0}/{1}/csvs/{2}/*.csv'.format(project_id, bucket_name, pip
 input_file_path = file_dirname + '/*.csv'
 error_file_path = 'gs://{0}/error_files/{1}'.format(project_id, script_name)
 
+gcs_creds = 'C:/Users/cmatt/Documents/Google Cloud Credentials/gce_creds.json'
+project_id = 'politics-data-tracker-1'
+bucket_name = 'poliviews'
+pipeline_name = 'house_members'
+blob_name = 'csvs/{0}/{0}_{1}.csv'.format(pipeline_name, date.today())
+gcs_path = 'gs://' + bucket_name + '/' + blob_name
+df_blob = 'gs://' + bucket_name + '/' + 'csvs/{0}/*.csv'.format(pipeline_name)
+
 # This is a list of all attributes that will be present in either a good vote or error vote. This will be used
 # to filter and/or order the attributes accordingly.
 # At this time, this is necessary. Make sure to do this for all pipelines.
@@ -66,7 +75,7 @@ pol_full_lst = pol_attr_lst + error_attr_lst
 
 # Set all options needed to properly run the pipeline. This pipeline will run on Dataflow as a streaming pipeline.
 options = PipelineOptions(streaming=False,
-                          runner='DirectRunner',
+                          runner='DataflowRunner',
                           project=project_id,
                           temp_location='gs://{0}/tmp'.format(project_id),
                           staging_location='gs://{0}/staging'.format(project_id))
@@ -77,7 +86,10 @@ logging.info('Created Beam pipeline.')
 
 # This will pull in all of the recorded nicknames to compare to the incoming PubSubMessages. This is needed to filter
 # and normalize the data.
-client = bigquery.Client()
+try:
+    client = bigquery.Client()
+except Exception as e:
+    client = bigquery.Client.from_service_account_json(gcs_creds)
 nickname_query = client.query("""
     select * from `{0}.{1}.{2}`""".format(project_id, dataset_id, nickname_table_id))
 nickname_tbl = nickname_query.result()
@@ -126,26 +138,28 @@ class SplitFn(beam.DoFn):
     def process(self, element):
         # for i in element:
             logging.info('{0}: {1}'.format(self.__class__.__name__, element))
-            index, first_name, last_name, party, state, district = element.split(',')
+            index, first_name, last_name, party, state, district, date = element.split(',')
             d = {
                 'first_name': first_name,
                 'last_name': last_name,
                 'party': party,
                 'state': state,
-                'district': district
+                'district': district,
+                'date': date
             }
             yield d
 
 # Runs the main part of the pipeline. Errors will be tagged, clean politicians will continue on to BQ.
 pol = (
         p
-        | 'Read from CSV' >> beam.io.ReadFromText('gs://{0}/tmp/house_members/*.csv'.format(os.path.expanduser('~')),
+        | 'Read from CSV' >> beam.io.ReadFromText(df_blob,
+    # 'gs://{0}/tmp/house_members/*.csv'.format(os.path.expanduser('~')),
                                                   skip_header_lines=1)
         | 'Split Values' >> beam.ParDo(SplitFn())
         # | 'Isolate Attributes' >> beam.ParDo(pt.IsolateAttrFn())
         | 'Scrub First Name' >> beam.ParDo(pt.ScrubFnameFn(), keep_suffix=True)
         | 'Fix Nicknames' >> beam.ParDo(pt.FixNicknameFn(), n_tbl=nickname_tbl, keep_nickname=True)
-        | 'Scrub Last Name' >> beam.ParDo(pt.ScrubLnameFn())
+        | 'Scrub Last Name' >> beam.ParDo(pt.ScrubLnameFn(), keep_suffix=True)
         | 'Map States' >> beam.ParDo(StateMapFn(), tbl=state_tbl)
         | 'Fix Nones' >> beam.ParDo(pt.FixNoneFn())
         | 'Tag Errors' >> beam.ParDo(pt.TagErrorsFn()).with_outputs('error_tag'))
@@ -168,7 +182,7 @@ new_pol = (clean_pols
 # and will upload a row signifying their time in office on that day.
 new_rep = (
         clean_pols
-        | 'Add Date' >> beam.ParDo(pt.AddDateFn())
+        # | 'Add Date' >> beam.ParDo(pt.AddDateFn())
         | 'Filter House Keys' >> beam.ParDo(pt.FilterKeysFn(), attr_lst=house_attr_lst)
         | 'Write Rep to BQ' >> beam.io.WriteToBigQuery(
             table=house_spec,
@@ -190,6 +204,8 @@ new_rep = (
         header=','.join(pol_full_lst)
     ))
 
-p.run()
+def main():
+    p.run()
 
-# If pipeline successful, then delete csv file
+if __name__ == '__main__':
+    main()

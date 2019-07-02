@@ -141,6 +141,7 @@ def scrub_name(s):
     if len(re.findall(r' [A-Z]\.', s)) == 1:
         s = re.sub(r' [A-Z]\.', '', s)  # remove middle initials
     s = re.sub(r' \".*\"', '', s)  # remove nicknames
+    s = re.sub(r'\"', '', s)  # remove stray quotes
     s, suffix = check_suffix(s)
     s = re.sub(r' \(.*\)', '', s)  # remove any parentheses
     s = re.sub(r'\,', '', s)  # remove stray commas
