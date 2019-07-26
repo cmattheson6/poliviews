@@ -7,6 +7,7 @@ current House member list up to date.
 import scrapy
 import logging
 from house_members.items import HouseMembersItem
+from datetime import date
 
 logging.basicConfig(level=logging.INFO)
 
@@ -62,6 +63,7 @@ class HousePolsSpider(scrapy.Spider):
                 house_item['party'] = party
                 house_item['state'] = state
                 house_item['district'] = district
+                house_item['date'] = date.today()
                 # logging.info('New Rep: {0}'.format(house_item))
                 # yields the Item, which will then get sent to the Scrapy pipeline to send to Pub/Sub.
                 yield house_item;
