@@ -6,7 +6,7 @@ current House member list up to date.
 
 import scrapy
 import logging
-from house_members.items import HouseMembersItem
+from house_members.house_members_scrapy.house_scrapy_pipeline.items import HouseMembersItem
 from datetime import date
 
 logging.basicConfig(level=logging.INFO)

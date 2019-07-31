@@ -1,11 +1,11 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
-from house_members.spiders.house_pols import HousePolsSpider
-from house_members.settings import house_members_settings
+from house_members.house_members_scrapy.house_scrapy_pipeline.spiders.house_pols import HousePolsSpider
+from house_members.house_members_scrapy.house_scrapy_pipeline.settings import house_members_settings
 import logging
 from google.cloud import storage
 import google.cloud.logging as logger
-from house_members.pipelines import tmp_path
+from house_members.house_members_scrapy.house_scrapy_pipeline.pipelines import tmp_path
 from datetime import date
 
 gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
