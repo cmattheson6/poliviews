@@ -15,7 +15,6 @@ import re
 
 
 import logging
-from google.cloud import storage
 import google.cloud.logging as logger
 
 gcs_creds = 'C:/Users/cmatt/Downloads/gce_creds.json'
