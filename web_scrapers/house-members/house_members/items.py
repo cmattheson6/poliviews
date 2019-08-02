@@ -13,4 +13,5 @@ class HouseMembersItem(scrapy.Item):
     party = scrapy.Field()
     state = scrapy.Field()
     district = scrapy.Field()
+    date = scrapy.Field()
 

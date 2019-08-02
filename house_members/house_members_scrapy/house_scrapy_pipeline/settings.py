@@ -13,8 +13,8 @@ from scrapy.settings import Settings
 
 BOT_NAME = 'house_members'
 
-SPIDER_MODULES = ['house_members.spiders']
-NEWSPIDER_MODULE = 'house_members.spiders'
+SPIDER_MODULES = ['house_scrapy_pipeline.spiders']
+NEWSPIDER_MODULE = 'house_scrapy_pipeline.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -68,7 +68,7 @@ DOWNLOAD_DELAY = 1
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'house_members.pipelines.PoliticiansPipeline': 100
+    'house_scrapy_pipeline.pipelines.PoliticiansPipeline': 100
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
