@@ -4,4 +4,4 @@ google-cloud-storage==1.16.0
 google-cloud-logging==1.11.0
 pandas==0.24.2
 unidecode==1.0.23
-apache-airflow==1.10.3
+apache-airflow==2.4.2
